@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html manifest="/application.manifest">
+	<head>
+		<title>Anunciar</title>
+			<%= csrf_meta_tags %>
+			<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+			<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+			<%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="manifest" href="/manifest.json" /></head>
+	<body>
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+				<!-- Title -->
+				<span class="mdl-layout-title"><%= yield(:title)%></span>
+				<!-- Add spacer, to align navigation to the right -->
+				<div class="mdl-layout-spacer"></div>
+				<!-- Navigation. We hide it in small screens. -->
+				<nav class="mdl-navigation mdl-layout--large-screen-only">
+					<% if student_signed_in? %>
+  						<%= link_to edit_student_registration_path, :class => 'mdl-navigation__link'  do %>
+  							<i id="tt3" class="material-icons">account_circle</i>
+  							<div class="mdl-tooltip" data-mdl-for="tt3">
+							Logged in as <strong><%= current_student.email.split('@')[0] %></strong>
+							</div>
+  						<% end %>
+  						 |
+  						<%= link_to destroy_student_session_path, method: :delete, :class => 'mdl-navigation__link' do  %>
+  							<i id="log_out" class="material-icons">remove_circle</i>
+  							<div class="mdl-tooltip" data-mdl-for="log_out">
+								Log out
+							</div>
+  						<% end %>
+					<% else %>
+  						<%= link_to "Login", new_student_session_path, :class => 'mdl-navigation__link'  %>
+ 					<% end %>
+				</nav>
+				</div>
+			</header>
+			<div class="mdl-layout__drawer">
+				<span class="mdl-layout-title"><%= yield(:title)%></span>
+				<nav class="mdl-navigation">
+					<% if student_signed_in? %>
+  						<%= link_to edit_student_registration_path, :class => 'mdl-navigation__link'  do %>
+  							<i id="tt3" class="material-icons">account_circle</i>
+  							<span><%= current_student.email.split('@')[0] %></span>
+  						<% end %>
+  						 |
+  						<%= link_to destroy_student_session_path, method: :delete, :class => 'mdl-navigation__link' do  %>
+  							<i id="log_out" class="material-icons">remove_circle</i> <span>Log Out</span>
+  						<% end %>
+					<% else %>
+  						<%= link_to "Login", new_student_session_path, :class => 'mdl-navigation__link'  %>
+					<% end %>
+				</nav>
+			</div>
+			<main class="mdl-layout__content">
+				<% if notice %>
+  					<p class="alert alert-success"><%= notice %></p>
+				<% end %>
+				<% if alert %>
+  					<p class="alert alert-danger"><%= alert %></p>
+				<% end %>
+				<div class="page-content"><%= yield %></div>
+			</main>
+		</div>
+	</body>
+</html>

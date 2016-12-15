@@ -1,0 +1,35 @@
+<% title @announcement.title[0..10]+'...' %>
+
+<!-- Wide card with share menu button -->
+<style>
+  .demo-card-wide {
+  width: 50%; 
+  margin: 0 auto;
+  margin-top: 50px;
+}
+@media screen and (max-width: 500px) {
+    .demo-card-wide {
+      width: 90%;
+
+    }
+}
+</style>
+
+<div class="demo-card-wide mdl-card mdl-shadow--2dp animated fadeInUp">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text"><%= @announcement.title %></h2>
+  </div>
+  <div class="mdl-card__supporting-text">
+    <%= @announcement.description %>
+  </div>
+  <div class="mdl-card__actions mdl-card--border">
+    <div class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+      <%= @announcement.deadline %>
+    </div>
+  </div>
+  <div class="mdl-card__menu">
+    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+      <i class="material-icons"><%= link_to 'keyboard_arrow_left', root_path %></i>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+<h2>Edit <%= resource_name.to_s.humanize %></h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label field">
+    <%= f.label :email, class: "mdl-textfield__label" %>
+    <%= f.email_field :email, autofocus: true, class: "mdl-textfield__input" %>
+  </div>
+  <br>
+  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+  <% end %>
+  <br>
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label field">
+    <%= f.label :password, class: "mdl-textfield__label" %> 
+    <%= f.password_field :password, autocomplete: "off", class: "mdl-textfield__input" %>
+    
+  </div>
+  <br>
+  <i>(leave blank if you don't want to change it)</i>
+  <% if @minimum_password_length %>
+      <br />
+      <em><%= @minimum_password_length %> characters minimum</em>
+    <% end %>
+  <br>
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label field">
+    <%= f.label :password_confirmation, class: "mdl-textfield__label" %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off", class: "mdl-textfield__input" %>
+  </div>
+  <br>
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label field">
+    <%= f.label :current_password, class: "mdl-textfield__label" %>
+    <%= f.password_field :current_password, autocomplete: "off", class: "mdl-textfield__input" %>
+  </div>
+  <br>
+  <i>(we need your current password to confirm your changes)</i>
+  <br>
+  <div class="actions">
+    <%= f.submit "Update", class: "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" %>
+  </div>
+<% end %>
+
+<h4>Cancel my account</h4>
+
+<p>Unhappy?</p> <br><%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, class: "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" %>
+<br>
+<%= link_to "Back", :back, class: "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" %>
