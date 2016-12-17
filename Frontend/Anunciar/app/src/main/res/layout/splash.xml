@@ -12,10 +12,11 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:scaleType="fitXY"
-        android:scaleY="2.2"
-        android:scaleX="2.2"
+        android:scaleY="3.2"
+        android:scaleX="3.2"
         android:id="@+id/imageView"
-        android:layout_weight="0.16" />
+        android:layout_weight="0.16"
+        android:transitionName="splash1"/>
 
     <TextView
         android:layout_width="match_parent"

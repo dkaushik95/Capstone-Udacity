@@ -21,15 +21,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!prefs.getBoolean("isSignedIn", false)){
-            //TODO Add Sign In Intent
-            Intent intent = new Intent(this,Login.class);
-            startActivity(intent);
-        }
-        else if (prefs.getBoolean("isSignedIn", false)){
             //TODO Show announcements
             ((TextView)findViewById(R.id.status_text)).setText("Signed in as "+ prefs.getString("user_displayName","error"));
-
-        }
     }
 }
