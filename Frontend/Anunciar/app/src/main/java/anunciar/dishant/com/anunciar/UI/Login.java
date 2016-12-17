@@ -1,4 +1,4 @@
-package anunciar.dishant.com.anunciar;
+package anunciar.dishant.com.anunciar.UI;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +15,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import anunciar.dishant.com.anunciar.R;
 
 public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     GoogleApiClient mGoogleApiClient;
@@ -88,6 +90,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
 
         } else {
             // Signed out, show unauthenticated UI.
+            //TODO remove this in release build
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
             Log.e(TAG, "handleSignInResult: "+result.toString());
             Toast toast = Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_SHORT);
             toast.show();
