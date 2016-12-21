@@ -1,0 +1,1 @@
+<provider android:name="anunciar.dishant.com.anunciar.Database.provider.AnnouncementProvider" android:authorities="anunciar.dishant.com.anunciar.Database.provider" android:exported="false" />

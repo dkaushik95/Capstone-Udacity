@@ -30,6 +30,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.Login"></activity>
+        <provider
+            android:authorities="anunciar.dishant.com.anunciar.Database"
+            android:name=".Database.AnnouncementProvider"/>
     </application>
 
 </manifest>
