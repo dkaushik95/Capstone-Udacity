@@ -9,4 +9,5 @@ public class API_Calls {
     public static String GET_ANNOUNCEMENT(int key){
         return GET_ALL_ANNOUNCMENT+"/"+key;
     }
+    public static final String GET_COUNT = "https://anunciar-backend.herokuapp.com/api/v1/counters/count";
 }

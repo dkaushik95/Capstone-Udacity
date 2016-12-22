@@ -19,6 +19,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     private String TAG = "Dishant";
     Cursor cursor;
+    int localCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 , null
                 , null);
         if (cursor.getCount() == 0) {
-            //TODO add all the announcement to the database
             Log.e(TAG, "onCreate: Empty database, but working :)"
                     , null);
-            Announcement.getmAnnouncements().clear();
-            JsonArrayRequest mJsonObjectRequest = new JsonArrayRequest(Request.Method.GET
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET
                     , API_Calls.GET_ALL_ANNOUNCMENT
                     , null
                     , new Response.Listener < JSONArray > () {
@@ -65,27 +66,18 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONObject mJsonObject = response.getJSONObject(i);
                             ContentValues announcement = new ContentValues();
-                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getInt("id"));
-                            announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getInt("title"));
-                            announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getInt("description"));
-                            announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getInt("deadline"));
-                            announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getInt("tags"));
-                            announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getInt("created_at"));
-                            announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getInt("updated_at"));
-
-                            Uri mUri = getContentResolver().insert(AnnouncementTable.CONTENT_URI,
-                                    announcement);
-                            Announcement ann = new Announcement(
-                                    mJsonObject.getInt("id")
-                                    , mJsonObject.getString("title")
-                                    , mJsonObject.getString("description")
-                                    , mJsonObject.getString("deadline")
-                                    , mJsonObject.getString("tags")
-                                    , mJsonObject.getString("created_at")
-                                    , mJsonObject.getString("updated_at"));
-                            ann.addToList(ann);
+                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getString("id"));
+                            announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getString("title"));
+                            announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getString("description"));
+                            announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getString("deadline"));
+                            announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getString("tags"));
+                            announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getString("created_at"));
+                            announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getString("updated_at"));
+                            getContentResolver()
+                                    .insert(AnnouncementTable.CONTENT_URI,
+                                            announcement);
                         } catch (Exception e) {
-
+                            Log.e(TAG, "onResponse: "+e.getMessage(), null);
                         }
                     }
                     cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,
@@ -104,19 +96,52 @@ public class MainActivity extends AppCompatActivity {
                     Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
                 }
             });
-            VolleySingleton.getInstance(this).addToRequestQueue(mJsonObjectRequest);
+            VolleySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
 
 
         } else {
-            //TODO add only the new announcement
+            Log.e(TAG, "onCreate: Data exists", null);
+            localCount = cursor.getCount();
+            StringRequest mStringRequest = new StringRequest(Request.Method.GET, API_Calls.GET_COUNT, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        prefs.edit().putInt("GlobalCount", Integer.parseInt(response)).apply();
+                    }
+                    catch (Exception e){
+                        Log.e(TAG, "onResponse: Couldn't GET count",null);
+                    }
+                    finally {
+                        if (localCount<prefs.getInt("GlobalCount",0)){
+                            //TODO add only new announcement here
+                            Log.e(TAG, "onCreate: GETTING NEW DATA",null);
+                        }
+                        else {
+                            Log.e(TAG, "onCreate: SHOWING OFFLINE DATA :) " + localCount+ " :: " + prefs.getInt("GlobalCount", 0),null );
+                            cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,
+                                    null,
+                                    null,
+                                    null,
+                                    null );
+                            mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                            mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
+                        }
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, "onErrorResponse: " +error.getMessage(), null);
+                }
+            });
+            VolleySingleton.getInstance(this).addToRequestQueue(mStringRequest);
+
         }
 
     }
 
     public class AnnouncementAdapter extends RecyclerView.Adapter < AnnouncementAdapter.MyViewHolder > {
         Cursor mCursor;
-        LayoutInflater layoutInflater;
-        Context context;
         public class MyViewHolder extends RecyclerView.ViewHolder {
             TextView title, createAt;
             public MyViewHolder(View itemView) {
@@ -128,25 +153,26 @@ public class MainActivity extends AppCompatActivity {
 
         public AnnouncementAdapter(Cursor aCursor) {
             mCursor = aCursor;
+            mCursor.moveToFirst();
         }
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             MyViewHolder vh = new MyViewHolder(((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE))
-                    .inflate(R.layout.announcement_list_item, null));
+                    .inflate(R.layout.announcement_list_item,null));
             return vh;
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            cursor.moveToPosition(position);
-            holder.title.setText(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
-            holder.createAt.setText(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)));
+            mCursor.moveToPosition(position);
+            holder.title.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
+            holder.createAt.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)));
         }
 
         @Override
         public int getItemCount() {
-            return cursor.getCount();
+            return mCursor.getCount();
         }
     }
 }

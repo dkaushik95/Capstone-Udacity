@@ -83,7 +83,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             sp.edit().putString("user_displayName",acct.getDisplayName()).apply();
             sp.edit().putString("user_email",acct.getEmail()).apply();
             sp.edit().putString("user_ID",acct.getId()).apply();
-            //TODO send to mainActivity
 
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -93,6 +92,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             //TODO remove this in release build
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+
             Log.e(TAG, "handleSignInResult: "+result.toString());
             Toast toast = Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_SHORT);
             toast.show();
