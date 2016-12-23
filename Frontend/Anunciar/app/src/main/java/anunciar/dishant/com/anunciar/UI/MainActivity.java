@@ -2,6 +2,7 @@ package anunciar.dishant.com.anunciar.UI;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,7 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,7 +28,10 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import anunciar.dishant.com.anunciar.API.API_Calls;
 import anunciar.dishant.com.anunciar.Database.Announcement;
@@ -33,6 +39,9 @@ import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTableDefinition;
 import anunciar.dishant.com.anunciar.Internet.VolleySingleton;
 import anunciar.dishant.com.anunciar.R;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = null;
@@ -42,17 +51,24 @@ public class MainActivity extends AppCompatActivity {
     int localCount;
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        System.exit(0);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
+        mRecyclerView.setItemAnimator(new SlideInDownAnimator());
         prefs = getSharedPreferences("anunciar.dishant.com.anunciar"
                 , MODE_PRIVATE);
         cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI
                 , null
                 , null
                 , null
-                , null);
+                , AnnouncementTable.FIELD_CREATED_AT);
         if (cursor.getCount() == 0) {
             Log.e(TAG, "onCreate: Empty database, but working :)"
                     , null);
@@ -84,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                             null,
                             null,
                             null,
-                            null );
+                            AnnouncementTable.FIELD_CREATED_AT );
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
 
@@ -114,6 +130,48 @@ public class MainActivity extends AppCompatActivity {
                     finally {
                         if (localCount<prefs.getInt("GlobalCount",0)){
                             //TODO add only new announcement here
+                            final int difference = prefs.getInt("GlobalCount",0) - localCount;
+                            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET
+                                    , API_Calls.GET_ALL_ANNOUNCMENT
+                                    , null
+                                    , new Response.Listener < JSONArray > () {
+                                @Override
+                                public void onResponse(JSONArray response) {
+                                    for (int i = 0; i < difference; i++) {
+                                        try {
+                                            JSONObject mJsonObject = response.getJSONObject(i);
+                                            ContentValues announcement = new ContentValues();
+                                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getString("id"));
+                                            announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getString("title"));
+                                            announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getString("description"));
+                                            announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getString("deadline"));
+                                            announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getString("tags"));
+                                            announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getString("created_at"));
+                                            announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getString("updated_at"));
+                                            getContentResolver()
+                                                    .insert(AnnouncementTable.CONTENT_URI,
+                                                            announcement);
+                                        } catch (Exception e) {
+                                            Log.e(TAG, "onResponse: "+e.getMessage(), null);
+                                        }
+                                    }
+                                    cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,null,
+                                            null,
+                                            null,
+                                            AnnouncementTable.FIELD_CREATED_AT );
+                                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                                    mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
+
+                                }
+
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
+                                }
+                            });
+                            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
+                            Toast.makeText(getApplicationContext(), difference+" new notifications!", Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "onCreate: GETTING NEW DATA",null);
                         }
                         else {
@@ -122,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                                     null,
                                     null,
                                     null,
-                                    null );
+                                    AnnouncementTable.FIELD_CREATED_AT + " DESC" );
                             mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                             mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
                         }
@@ -139,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
     public class AnnouncementAdapter extends RecyclerView.Adapter < AnnouncementAdapter.MyViewHolder > {
         Cursor mCursor;
@@ -158,8 +217,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            MyViewHolder vh = new MyViewHolder(((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE))
-                    .inflate(R.layout.announcement_list_item,null));
+            View mView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.announcement_list_item,null);
+            final MyViewHolder vh = new MyViewHolder(mView);
+            mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent list_item = new Intent(getApplicationContext(), AnnouncementDetail.class);
+                    int itempos = vh.getLayoutPosition();
+                    mCursor.moveToPosition(itempos);
+                    Log.e(TAG, "onClick: Position: "+itempos,null);
+                    Log.e(TAG, "onClick: ID IS "+ mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)),null );
+                    list_item.putExtra(AnnouncementTable.FIELD_ID, mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)));
+                    startActivity(list_item);
+                }
+            });
             return vh;
         }
 
@@ -167,7 +238,24 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(MyViewHolder holder, int position) {
             mCursor.moveToPosition(position);
             holder.title.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
-            holder.createAt.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)));
+            //TODO fix the data format issues
+            try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0,10));
+                Date now = new Date();
+                String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
+                if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0){
+                    holder.createAt.setText("Today");
+                }
+                else {
+                    holder.createAt.setText(days);
+                }
+                notifyItemInserted(position);
+            }
+            catch (Exception j){
+                j.printStackTrace();
+            }
+            //holder.createAt.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)));
         }
 
         @Override
