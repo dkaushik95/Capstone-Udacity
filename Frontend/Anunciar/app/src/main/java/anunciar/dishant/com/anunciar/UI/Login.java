@@ -1,11 +1,16 @@
 package anunciar.dishant.com.anunciar.UI;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Slide;
+import android.transition.Transition;
 import android.util.Log;
+import android.util.Pair;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,6 +32,10 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Transition enterT = new Slide(Gravity.TOP);
+        enterT.setInterpolator(new FastOutSlowInInterpolator());
+        getWindow().setEnterTransition(enterT);
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -70,20 +79,22 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Login.this, new Pair<View, String>((View)findViewById(R.id.Icon), "splash1"));
             SharedPreferences sp = getSharedPreferences("anunciar.dishant.com.anunciar", MODE_PRIVATE);
             sp.edit().putBoolean("isSignedIn", true).apply();
             sp.edit().putString("user_displayName",acct.getDisplayName()).apply();
             sp.edit().putString("user_email",acct.getEmail()).apply();
             sp.edit().putString("user_ID",acct.getId()).apply();
+            sp.edit().putString("user_photo",acct.getPhotoUrl().toString()).apply();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
             // Signed out, show unauthenticated UI.
             //TODO remove this in release build
-            Intent intent = new Intent(this, MainActivity.class);
+            //Intent intent = new Intent(this, MainActivity.class);
             //ImageView imageView = (ImageView)findViewById(R.id.Icon);
             //ActivityOptionsCompat mActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(Login.this, imageView, "splash1");
-            startActivity(intent);
+            //startActivity(intent);
             Log.e(TAG, "handleSignInResult: "+result.toString());
             Toast toast = Toast.makeText(getApplicationContext(), "Error Signing you in", Toast.LENGTH_SHORT);
             toast.show();

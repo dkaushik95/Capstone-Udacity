@@ -23,7 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.MainActivity"
+        <activity
+            android:name=".UI.MainActivity"
             android:theme="@style/AppTheme.Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,6 +47,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="anunciar.dishant.com.anunciar.UI.MainActivity" />
         </activity>
+        <activity android:name=".UI.ShowAccount"></activity>
     </application>
 
 </manifest>

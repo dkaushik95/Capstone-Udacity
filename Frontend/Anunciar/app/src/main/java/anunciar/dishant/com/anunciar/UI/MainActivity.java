@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,6 +52,7 @@ import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTableDefinition;
 import anunciar.dishant.com.anunciar.Internet.VolleySingleton;
 import anunciar.dishant.com.anunciar.R;
+import anunciar.dishant.com.anunciar.Service.CircleTransform;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
@@ -75,17 +79,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Transition exitTrans = new Slide(Gravity.TOP);
-        exitTrans.setInterpolator(new DecelerateInterpolator());
-        getWindow().setExitTransition(exitTrans);
-
-        Transition reenterTrans = new Slide(Gravity.BOTTOM);
-        reenterTrans.setInterpolator(new DecelerateInterpolator());
-        getWindow().setReenterTransition(reenterTrans);
-        mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
-        mRecyclerView.setItemAnimator(new SlideInDownAnimator());
         prefs = getSharedPreferences("anunciar.dishant.com.anunciar"
                 , MODE_PRIVATE);
+        //Transistions
+        Transition exitTrans = new Slide(Gravity.LEFT);
+        exitTrans.setDuration(1000);
+        exitTrans.setInterpolator(new FastOutSlowInInterpolator());
+        getWindow().setExitTransition(exitTrans);
+
+        Transition reenterTrans = new Slide(Gravity.LEFT);
+        reenterTrans.setDuration(1000);
+        reenterTrans.setInterpolator(new FastOutSlowInInterpolator());
+        getWindow().setReenterTransition(reenterTrans);
+
+        //Account display_pic
+
+        Picasso.with(getApplicationContext()).load(prefs.getString("user_photo", ""))
+                .resize(200,200)
+                .transform(new CircleTransform())
+                .centerCrop()
+                .into((ImageView)findViewById(R.id.account_photo));
+
+        //Creating Announcements
+        mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
+        mRecyclerView.setItemAnimator(new SlideInDownAnimator());
+
         cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI
                 , null
                 , null
@@ -220,6 +238,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void showAccount(View view) {
+        ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, new Pair<View, String>(findViewById(R.id.account_photo), "accountT"));
+        Intent intent = new Intent(MainActivity.this, ShowAccount.class);
+        startActivity(intent, activityOptions.toBundle());
+
+    }
+
 
     public class AnnouncementAdapter extends RecyclerView.Adapter < AnnouncementAdapter.MyViewHolder > {
         Cursor mCursor;
@@ -244,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, new Pair<View, String>(parent, "titleT"), new Pair<View, String>(parent, "createdT"));
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                     Intent list_item = new Intent(MainActivity.this, AnnouncementDetail.class);
                     int itempos = vh.getLayoutPosition();
                     mCursor.moveToPosition(itempos);

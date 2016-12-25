@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewGroupCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -49,12 +50,14 @@ public class AnnouncementDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_announcement_detail);
-        Transition enterTrans = new Slide(Gravity.BOTTOM);
-        enterTrans.setInterpolator(new DecelerateInterpolator());
+        Transition enterTrans = new Slide(Gravity.RIGHT);
+        enterTrans.setDuration(1000);
+        enterTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setEnterTransition(enterTrans);
 
-        Transition returnTrans = new Slide(Gravity.TOP);
-        returnTrans.setInterpolator(new DecelerateInterpolator());
+        Transition returnTrans = new Slide(Gravity.RIGHT);
+        returnTrans.setDuration(1000);
+        returnTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setReturnTransition(returnTrans);
 
         Intent intent = getIntent();
