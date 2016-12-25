@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:text="Detail Title"
                 android:textSize="30sp"
+                android:transitionName="titleT"
                 android:layout_margin="20dp"
                 android:layout_gravity="center|start"
                 android:id="@+id/announcement_title"/>
@@ -34,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/announcement_created"
+                android:transitionName="createdT"
                 android:layout_margin="20dp"
                 android:text="dd/mm/yyyy"
                 android:layout_gravity="bottom|right"
@@ -53,6 +55,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <RelativeLayout
             android:layout_width="match_parent"
+            android:id="@+id/detail.details"
             android:layout_height="270dp">
                 <TextView
                     android:padding="20dp"

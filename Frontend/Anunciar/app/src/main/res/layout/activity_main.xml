@@ -25,9 +25,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@mipmap/ic_launcher"
-                android:scaleX="3"
+                android:scaleX="5"
                 android:alpha="0.3"
-                android:scaleY="3"
+                android:layout_gravity="bottom|right"
+                android:scaleY="5"
+                android:layout_marginBottom="200dp"
+                android:transitionName="splash1"
                 android:scaleType="fitCenter"/>
             <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"

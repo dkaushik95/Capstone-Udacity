@@ -1,19 +1,29 @@
 package anunciar.dishant.com.anunciar.UI;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
 import android.util.Log;
+import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Transition exitTrans = new Slide(Gravity.TOP);
+        exitTrans.setInterpolator(new DecelerateInterpolator());
+        getWindow().setExitTransition(exitTrans);
+
+        Transition reenterTrans = new Slide(Gravity.BOTTOM);
+        reenterTrans.setInterpolator(new DecelerateInterpolator());
+        getWindow().setReenterTransition(reenterTrans);
         mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
         mRecyclerView.setItemAnimator(new SlideInDownAnimator());
         prefs = getSharedPreferences("anunciar.dishant.com.anunciar"
@@ -221,19 +238,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public MyViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
             View mView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.announcement_list_item,null);
             final MyViewHolder vh = new MyViewHolder(mView);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent list_item = new Intent(getApplicationContext(), AnnouncementDetail.class);
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, new Pair<View, String>(parent, "titleT"), new Pair<View, String>(parent, "createdT"));
+                    Intent list_item = new Intent(MainActivity.this, AnnouncementDetail.class);
                     int itempos = vh.getLayoutPosition();
                     mCursor.moveToPosition(itempos);
                     Log.e(TAG, "onClick: Position: "+itempos,null);
                     Log.e(TAG, "onClick: ID IS "+ mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)),null );
                     list_item.putExtra(AnnouncementTable.FIELD_ID, mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)));
-                    startActivity(list_item);
+
+                    startActivity(list_item, options.toBundle());
                 }
             });
             return vh;

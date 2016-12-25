@@ -2,10 +2,12 @@ package anunciar.dishant.com.anunciar.UI;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -17,12 +19,10 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import anunciar.dishant.com.anunciar.R;
-
 public class Login extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "Login";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,13 +34,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
                 .build();
-
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-
-
     }
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -49,7 +45,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         Toast toast = Toast.makeText(getApplicationContext(), connectionResult.toString(), Toast.LENGTH_SHORT);
         toast.show();
     }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -62,18 +57,15 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
     }
-
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
@@ -83,20 +75,18 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             sp.edit().putString("user_displayName",acct.getDisplayName()).apply();
             sp.edit().putString("user_email",acct.getEmail()).apply();
             sp.edit().putString("user_ID",acct.getId()).apply();
-
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-
         } else {
             // Signed out, show unauthenticated UI.
             //TODO remove this in release build
-//            Intent intent = new Intent(this, MainActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            //ImageView imageView = (ImageView)findViewById(R.id.Icon);
+            //ActivityOptionsCompat mActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(Login.this, imageView, "splash1");
+            startActivity(intent);
             Log.e(TAG, "handleSignInResult: "+result.toString());
             Toast toast = Toast.makeText(getApplicationContext(), "Error Signing you in", Toast.LENGTH_SHORT);
             toast.show();
         }
     }
-
-
 }

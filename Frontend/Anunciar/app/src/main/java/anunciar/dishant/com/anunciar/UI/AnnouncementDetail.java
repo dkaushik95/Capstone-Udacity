@@ -16,8 +16,15 @@ import android.support.v4.view.ViewGroupCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +49,14 @@ public class AnnouncementDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_announcement_detail);
+        Transition enterTrans = new Slide(Gravity.BOTTOM);
+        enterTrans.setInterpolator(new DecelerateInterpolator());
+        getWindow().setEnterTransition(enterTrans);
+
+        Transition returnTrans = new Slide(Gravity.TOP);
+        returnTrans.setInterpolator(new DecelerateInterpolator());
+        getWindow().setReturnTransition(returnTrans);
+
         Intent intent = getIntent();
         int id = intent.getIntExtra(AnnouncementTable.FIELD_ID, 0);
         cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI, null, AnnouncementTable.FIELD_ID + " = " + id, null, null);

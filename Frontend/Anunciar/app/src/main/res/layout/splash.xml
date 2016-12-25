@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#303f9f"
+    android:id="@+id/splash_layout"
     android:orientation="vertical"
     android:weightSum="1">
 
