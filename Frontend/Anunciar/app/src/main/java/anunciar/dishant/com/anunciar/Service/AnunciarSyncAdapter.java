@@ -1,13 +1,24 @@
 package anunciar.dishant.com.anunciar.Service;
 
-import android.app.IntentService;
-import android.content.BroadcastReceiver;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncRequest;
+import android.content.SyncResult;
 import android.database.Cursor;
-import android.support.v7.widget.LinearLayoutManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,27 +34,54 @@ import org.json.JSONObject;
 import anunciar.dishant.com.anunciar.API.API_Calls;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.Internet.VolleySingleton;
+import anunciar.dishant.com.anunciar.R;
 import anunciar.dishant.com.anunciar.UI.MainActivity;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
- * Created by dishantkaushik on 12/27/16.
+ * Created by dishantkaushik on 12/28/16.
  */
 
-public class AnunciarService extends IntentService {
+public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
+
     String TAG = "Anunciar Service";
+
+    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+
     int localCount;
     SharedPreferences prefs;
 
+    public final String LOG_TAG = AnunciarSyncAdapter.class.getSimpleName();
+    public AnunciarSyncAdapter(Context context, boolean autoInitialize) {
+        super(context, autoInitialize);
+    }
 
-    public AnunciarService() {
-        super("AnunciarService");
+
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+        Account account = getSyncAccount(context);
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // we can enable inexact timers in our periodic sync
+            SyncRequest request = new SyncRequest.Builder().
+                    syncPeriodic(syncInterval, flexTime).
+                    setSyncAdapter(account, authority).
+                    setExtras(new Bundle()).build();
+            ContentResolver.requestSync(request);
+        } else {
+            ContentResolver.addPeriodicSync(account,
+                    authority, new Bundle(), syncInterval);
+        }
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        prefs = getSharedPreferences("anunciar.dishant.com.anunciar"
+    public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
+        Log.d(LOG_TAG, "onPerformSync Called.");
+
+        prefs = getContext().getSharedPreferences("anunciar.dishant.com.anunciar"
                 , MODE_PRIVATE);
-        Cursor cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI
+        Cursor cursor = getContext().getContentResolver().query(AnnouncementTable.CONTENT_URI
                 , null
                 , null
                 , null
@@ -68,7 +106,7 @@ public class AnunciarService extends IntentService {
                             announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getString("tags"));
                             announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getString("created_at"));
                             announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getString("updated_at"));
-                            getContentResolver()
+                            getContext().getContentResolver()
                                     .insert(AnnouncementTable.CONTENT_URI,
                                             announcement);
                         } catch (Exception e) {
@@ -83,7 +121,7 @@ public class AnunciarService extends IntentService {
                     Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
                 }
             });
-            VolleySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
+            VolleySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
 
 
         } else {
@@ -119,7 +157,7 @@ public class AnunciarService extends IntentService {
                                             announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getString("tags"));
                                             announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getString("created_at"));
                                             announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getString("updated_at"));
-                                            getContentResolver()
+                                            getContext().getContentResolver()
                                                     .insert(AnnouncementTable.CONTENT_URI,
                                                             announcement);
                                         } catch (Exception e) {
@@ -134,8 +172,26 @@ public class AnunciarService extends IntentService {
                                     Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
                                 }
                             });
-                            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
-                            Toast.makeText(getApplicationContext(), difference+" new notifications!", Toast.LENGTH_SHORT).show();
+                            VolleySingleton.getInstance(getContext().getApplicationContext()).addToRequestQueue(jsonArrayRequest);
+                            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+                                    .setSmallIcon(R.drawable.ic_stat_anunciar_icon_notification)
+                                    .setContentTitle("Anunciar calls!")
+                                    .setContentText("You have "+ difference + " new Announcements! Click to see the announcements.");
+                            Intent resultIntent = new Intent(getContext(), MainActivity.class);
+
+                            TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
+                            stackBuilder.addParentStack(MainActivity.class);
+
+                            stackBuilder.addNextIntent(resultIntent);
+                            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                            mBuilder.setContentIntent(resultPendingIntent);
+
+                            NotificationManager managerCompat = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                            int mId = 1;
+                            managerCompat.notify(mId, mBuilder.build());
+
+                            Toast.makeText(getContext().getApplicationContext(), difference+" new notifications!", Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "onCreate: GETTING NEW DATA",null);
                         }
                         else {
@@ -149,17 +205,69 @@ public class AnunciarService extends IntentService {
                     Log.e(TAG, "onErrorResponse: " +error.getMessage(), null);
                 }
             });
-            VolleySingleton.getInstance(this).addToRequestQueue(mStringRequest);
+            VolleySingleton.getInstance(getContext()).addToRequestQueue(mStringRequest);
 
         }
+
 
     }
-    static public class AlarmReciever extends BroadcastReceiver{
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Intent sendIntent = new Intent(context, AnunciarService.class);
-            context.startService(sendIntent);
+    public static void syncImmediately(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        ContentResolver.requestSync(getSyncAccount(context),
+                context.getString(R.string.content_authority), bundle);
+    }
+
+    public static Account getSyncAccount(Context context) {
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+
+        // Create the account type and default account
+        Account newAccount = new Account(
+                context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
+
+        // If the password doesn't exist, the account doesn't exist
+        if ( null == accountManager.getPassword(newAccount) ) {
+
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
+                return null;
+            }
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+
+            onAccountCreated(newAccount, context);
         }
+        return newAccount;
+    }
+    private static void onAccountCreated(Account newAccount, Context context) {
+        /*
+         * Since we've created an account
+         */
+        AnunciarSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+
+        /*
+         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
+         */
+        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+
+        /*
+         * Finally, let's do a sync to get things started
+         */
+        syncImmediately(context);
+    }
+
+    public static void initializeSyncAdapter(Context context) {
+        getSyncAccount(context);
     }
 }

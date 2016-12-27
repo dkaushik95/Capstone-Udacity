@@ -13,6 +13,7 @@ import android.util.Pair;
 import android.view.View;
 
 import anunciar.dishant.com.anunciar.R;
+import anunciar.dishant.com.anunciar.Service.AnunciarSyncAdapter;
 
 /**
  * Created by dishantkaushik on 12/16/16.
@@ -23,6 +24,8 @@ public class SplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+        AnunciarSyncAdapter.initializeSyncAdapter(this);
 
         Transition exitTransistion = new Fade();
         exitTransistion.setDuration(1000);

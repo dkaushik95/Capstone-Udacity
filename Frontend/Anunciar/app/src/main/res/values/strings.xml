@@ -15,4 +15,8 @@
         completions."
     </string>
     <string name="title_activity_announcement_detail">AnnouncementDetail</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">anunciar.example.com</string>
+    <string name="content_authority">anunciar.dishant.com.anunciar.Database</string>
 </resources>

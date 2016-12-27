@@ -54,7 +54,7 @@ import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTableDefinition;
 import anunciar.dishant.com.anunciar.Internet.VolleySingleton;
 import anunciar.dishant.com.anunciar.R;
-import anunciar.dishant.com.anunciar.Service.AnunciarService;
+import anunciar.dishant.com.anunciar.Service.AnunciarSyncAdapter;
 import anunciar.dishant.com.anunciar.Service.CircleTransform;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
@@ -78,15 +78,7 @@ public class MainActivity extends AppCompatActivity {
         System.exit(0);
     }
     public void getData(){
-        Intent alarmIntent = new Intent(this, AnunciarService.AlarmReciever.class);
-
-        PendingIntent pi = PendingIntent.getBroadcast(this,0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
-//
-//        Intent serviceIntent = new Intent(this, AnunciarService.class);
-//        startService(serviceIntent);
+        AnunciarSyncAdapter.syncImmediately(this);
     }
 
     @Override
@@ -108,11 +100,17 @@ public class MainActivity extends AppCompatActivity {
 
         //Account display_pic
 
-        Picasso.with(getApplicationContext()).load(prefs.getString("user_photo", ""))
-                .resize(200,200)
-                .transform(new CircleTransform())
-                .centerCrop()
-                .into((ImageView)findViewById(R.id.account_photo));
+        try {
+            Picasso.with(getApplicationContext()).load(prefs.getString("user_photo", ""))
+                    .resize(200, 200)
+                    .transform(new CircleTransform())
+                    .centerCrop()
+                    .into((ImageView) findViewById(R.id.account_photo));
+        }
+        catch (Exception e){
+            Log.e(TAG, "onCreate: Failed to fetch the user photo", null);
+            Toast.makeText(this, "Failed to get profile picture", Toast.LENGTH_SHORT).show();
+        }
 
         //Creating Announcements
         mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 null,
                 null,
-                AnnouncementTable.FIELD_CREATED_AT);
+                AnnouncementTable.FIELD_CREATED_AT+ " DESC");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
 
