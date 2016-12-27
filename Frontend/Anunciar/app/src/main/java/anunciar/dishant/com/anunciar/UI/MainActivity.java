@@ -2,6 +2,8 @@ package anunciar.dishant.com.anunciar.UI;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -52,6 +54,7 @@ import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTableDefinition;
 import anunciar.dishant.com.anunciar.Internet.VolleySingleton;
 import anunciar.dishant.com.anunciar.R;
+import anunciar.dishant.com.anunciar.Service.AnunciarService;
 import anunciar.dishant.com.anunciar.Service.CircleTransform;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
@@ -73,6 +76,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
         System.exit(0);
+    }
+    public void getData(){
+        Intent alarmIntent = new Intent(this, AnunciarService.AlarmReciever.class);
+
+        PendingIntent pi = PendingIntent.getBroadcast(this,0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+//
+//        Intent serviceIntent = new Intent(this, AnunciarService.class);
+//        startService(serviceIntent);
     }
 
     @Override
@@ -103,138 +117,15 @@ public class MainActivity extends AppCompatActivity {
         //Creating Announcements
         mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
         mRecyclerView.setItemAnimator(new SlideInDownAnimator());
+        getData();
 
-        cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI
-                , null
-                , null
-                , null
-                , AnnouncementTable.FIELD_CREATED_AT);
-        if (cursor.getCount() == 0) {
-            Log.e(TAG, "onCreate: Empty database, but working :)"
-                    , null);
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET
-                    , API_Calls.GET_ALL_ANNOUNCMENT
-                    , null
-                    , new Response.Listener < JSONArray > () {
-                @Override
-                public void onResponse(JSONArray response) {
-                    for (int i = 0; i < response.length(); i++) {
-                        try {
-                            JSONObject mJsonObject = response.getJSONObject(i);
-                            ContentValues announcement = new ContentValues();
-                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getString("id"));
-                            announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getString("title"));
-                            announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getString("description"));
-                            announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getString("deadline"));
-                            announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getString("tags"));
-                            announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getString("created_at"));
-                            announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getString("updated_at"));
-                            getContentResolver()
-                                    .insert(AnnouncementTable.CONTENT_URI,
-                                            announcement);
-                        } catch (Exception e) {
-                            Log.e(TAG, "onResponse: "+e.getMessage(), null);
-                        }
-                    }
-                    cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,
-                            null,
-                            null,
-                            null,
-                            AnnouncementTable.FIELD_CREATED_AT );
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
-
-                }
-
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
-                }
-            });
-            VolleySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
-
-
-        } else {
-            Log.e(TAG, "onCreate: Data exists", null);
-            localCount = cursor.getCount();
-            StringRequest mStringRequest = new StringRequest(Request.Method.GET, API_Calls.GET_COUNT, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        prefs.edit().putInt("GlobalCount", Integer.parseInt(response)).apply();
-                    }
-                    catch (Exception e){
-                        Log.e(TAG, "onResponse: Couldn't GET count",null);
-                    }
-                    finally {
-                        if (localCount<prefs.getInt("GlobalCount",0)){
-                            //TODO add only new announcement here
-                            final int difference = prefs.getInt("GlobalCount",0) - localCount;
-                            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET
-                                    , API_Calls.GET_ALL_ANNOUNCMENT
-                                    , null
-                                    , new Response.Listener < JSONArray > () {
-                                @Override
-                                public void onResponse(JSONArray response) {
-                                    for (int i = 0; i < difference; i++) {
-                                        try {
-                                            JSONObject mJsonObject = response.getJSONObject(i);
-                                            ContentValues announcement = new ContentValues();
-                                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getString("id"));
-                                            announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getString("title"));
-                                            announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getString("description"));
-                                            announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getString("deadline"));
-                                            announcement.put(AnnouncementTable.FIELD_TAGS, mJsonObject.getString("tags"));
-                                            announcement.put(AnnouncementTable.FIELD_CREATED_AT, mJsonObject.getString("created_at"));
-                                            announcement.put(AnnouncementTable.FIELD_UPDATED_AT, mJsonObject.getString("updated_at"));
-                                            getContentResolver()
-                                                    .insert(AnnouncementTable.CONTENT_URI,
-                                                            announcement);
-                                        } catch (Exception e) {
-                                            Log.e(TAG, "onResponse: "+e.getMessage(), null);
-                                        }
-                                    }
-                                    cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,null,
-                                            null,
-                                            null,
-                                            AnnouncementTable.FIELD_CREATED_AT );
-                                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                                    mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
-
-                                }
-
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
-                                }
-                            });
-                            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonArrayRequest);
-                            Toast.makeText(getApplicationContext(), difference+" new notifications!", Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "onCreate: GETTING NEW DATA",null);
-                        }
-                        else {
-                            Log.e(TAG, "onCreate: SHOWING OFFLINE DATA :) " + localCount+ " :: " + prefs.getInt("GlobalCount", 0),null );
-                            cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,
-                                    null,
-                                    null,
-                                    null,
-                                    AnnouncementTable.FIELD_CREATED_AT + " DESC" );
-                            mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                            mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
-                        }
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "onErrorResponse: " +error.getMessage(), null);
-                }
-            });
-            VolleySingleton.getInstance(this).addToRequestQueue(mStringRequest);
-
-        }
+        cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,
+                null,
+                null,
+                null,
+                AnnouncementTable.FIELD_CREATED_AT);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
 
     }
 

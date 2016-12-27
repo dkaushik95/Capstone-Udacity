@@ -48,6 +48,9 @@
                 android:value="anunciar.dishant.com.anunciar.UI.MainActivity" />
         </activity>
         <activity android:name=".UI.ShowAccount"></activity>
+        <service android:name=".Service.AnunciarService" />
+        <receiver android:name=".Service.AnunciarService$AlarmReciever"
+            android:enabled="true"/>
     </application>
 
 </manifest>
