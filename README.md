@@ -17,4 +17,4 @@ The frontend folder contains the Android Application which interacts with the AP
 
 ##The details
 
-<embed src="Capstone_Anunciar.pdf" width="800px" height="2100px" />
+>[Check this for details](..Capstone_Anunciar.pdf)
