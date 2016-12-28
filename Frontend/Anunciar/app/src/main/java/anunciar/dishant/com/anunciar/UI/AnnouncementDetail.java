@@ -37,12 +37,12 @@ public class AnnouncementDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_announcement_detail);
         Transition enterTrans = new Slide(Gravity.RIGHT);
-        enterTrans.setDuration(1000);
+        enterTrans.setDuration(300);
         enterTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setEnterTransition(enterTrans);
 
         Transition returnTrans = new Slide(Gravity.RIGHT);
-        returnTrans.setDuration(1000);
+        returnTrans.setDuration(300);
         returnTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setReturnTransition(returnTrans);
 
@@ -66,8 +66,11 @@ public class AnnouncementDetail extends AppCompatActivity {
             description = (TextView) findViewById(R.id.announcement_description);
             deadline = (Button) findViewById(R.id.announcement_deadline);
             created = (TextView) findViewById(R.id.announcement_created);
+
             title.setText(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
+            title.setContentDescription(title.getText());
             description.setText(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DESCRIPTION)));
+            description.setContentDescription(description.getText());
 
             if (cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)) == null) {
                 deadline.setVisibility(View.INVISIBLE);
@@ -101,9 +104,12 @@ public class AnnouncementDetail extends AppCompatActivity {
                 String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
                 if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
                     created.setText(R.string.day_today);
+
                 } else {
                     created.setText(days);
+
                 }
+                created.setContentDescription(created.getText());
             } catch (Exception j) {
                 j.printStackTrace();
             }

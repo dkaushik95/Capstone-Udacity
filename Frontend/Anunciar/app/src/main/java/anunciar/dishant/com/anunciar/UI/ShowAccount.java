@@ -30,6 +30,10 @@ public class ShowAccount extends AppCompatActivity {
         ((TextView)findViewById(R.id.account_name)).setText("Name : "+ preferences.getString("user_displayName", ""));
         ((TextView)findViewById(R.id.account_mail)).setText("Email : "+ preferences.getString("user_email", ""));
         ((TextView)findViewById(R.id.userid)).setText("UserId : "+ preferences.getString("user_ID", ""));
+        (findViewById(R.id.account_name)).setContentDescription("Name : "+ preferences.getString("user_displayName", ""));
+        (findViewById(R.id.account_mail)).setContentDescription("Email : "+ preferences.getString("user_email", ""));
+        (findViewById(R.id.userid)).setContentDescription("UserId : "+ preferences.getString("user_ID", ""));
+
         Picasso.with(getApplicationContext())
                 .load(preferences.getString("user_photo", ""))
                 .into((ImageView)findViewById(R.id.account_photo2));

@@ -50,6 +50,7 @@ public class AnunciarWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int i = 0; i< appWidgetIds.length; i++){
+
             Intent in = new Intent(context, AnunciarSyncService.class);
             context.startService(in);
 
@@ -60,7 +61,6 @@ public class AnunciarWidgetProvider extends AppWidgetProvider {
 
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.anunciar_appwidget);
             rv.setRemoteAdapter(R.id.stack_view, intent);
-
             rv.setEmptyView(R.id.stack_view, R.id.empty_view);
 
             Intent intentOnClick = new Intent(context, AnnouncementDetail.class);

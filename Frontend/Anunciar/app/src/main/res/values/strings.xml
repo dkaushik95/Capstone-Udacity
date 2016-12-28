@@ -35,4 +35,11 @@
     <string name="subtitle">The Announcement App</string>
     <string name="dummy_widget_text">Announcement text will be big and will show here</string>
     <string name="dummy_widget_created_text">10 days ago</string>
+    <string name="accessibility_add_calendar">Click again to add this announcement to your calendar</string>
+    <string name="access_logo_description">Anunciar Logo</string>
+    <string name="access_sign_in_button">Click here to sign in wigh Google</string>
+    <string name="access_show_profile">Click here to show your profile and log out</string>
+    <string name="sync_profile_pic">This is your profile picture</string>
+    <string name="access_logout_button">Click here to log out from the application</string>
+    <string name="error_text">There is an error getting data from the API, please check your internet connection and restart the app.</string>
 </resources>

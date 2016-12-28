@@ -73,6 +73,7 @@
                     android:id="@+id/announcement_deadline"
                     android:background="@drawable/ripple"
                     android:onClick="addCalendar"
+                    android:contentDescription="@string/accessibility_add_calendar"
                     />
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

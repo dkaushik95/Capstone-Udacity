@@ -29,7 +29,8 @@
                 android:id="@+id/account_photo"
                 android:clickable="true"
                 android:onClick="showAccount"
-                android:transitionName="accountT"/>
+                android:transitionName="accountT"
+                android:contentDescription="@string/access_show_profile" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,13 +41,15 @@
                 android:scaleY="5"
                 android:layout_marginBottom="200dp"
                 android:transitionName="splash1"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/access_logo_description" />
             <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin"
-                app:title="@string/app_name"/>
+                app:title="@string/app_name"
+                android:contentDescription="@string/app_name"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
     <android.support.v4.widget.NestedScrollView
@@ -59,5 +62,30 @@
             android:id="@+id/announcement_list">
             </android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.NestedScrollView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/empty_view_main"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_error_black"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:scaleX="3"
+            android:translationY="55dp"
+            android:scaleY="3"
+            android:id="@+id/error_pic"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/error_pic"
+            android:layout_marginTop="80dp"
+            android:textAlignment="center"
+            android:padding="@dimen/big_padding"
+            android:text="@string/error_text"/>
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
 

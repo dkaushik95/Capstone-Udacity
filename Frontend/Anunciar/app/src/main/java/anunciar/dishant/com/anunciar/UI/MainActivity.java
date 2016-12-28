@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,12 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 , MODE_PRIVATE);
         //Transistions
         Transition exitTrans = new Slide(Gravity.LEFT);
-        exitTrans.setDuration(1000);
+        exitTrans.setDuration(300);
         exitTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setExitTransition(exitTrans);
 
         Transition reenterTrans = new Slide(Gravity.LEFT);
-        reenterTrans.setDuration(1000);
+        reenterTrans.setDuration(300);
         reenterTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setReenterTransition(reenterTrans);
 
@@ -95,6 +96,15 @@ public class MainActivity extends AppCompatActivity {
                 AnnouncementTable.FIELD_CREATED_AT+ " DESC");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
+        RelativeLayout emptyView = (RelativeLayout)findViewById(R.id.empty_view_main);
+        if (cursor.getCount() == 0){
+            mRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
 
     }
 
@@ -144,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(MyViewHolder holder, int position) {
             mCursor.moveToPosition(position);
             holder.title.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
+            holder.title.setContentDescription(holder.title.getText());
             try {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0,10));
@@ -151,10 +162,12 @@ public class MainActivity extends AppCompatActivity {
                 String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
                 if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0){
                     holder.createAt.setText(R.string.day_today);
+
                 }
                 else {
                     holder.createAt.setText(days);
                 }
+                holder.createAt.setContentDescription(holder.createAt.getText());
                 notifyItemInserted(position);
             }
             catch (Exception j){
