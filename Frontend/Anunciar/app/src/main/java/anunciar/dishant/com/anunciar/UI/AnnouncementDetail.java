@@ -1,43 +1,29 @@
 package anunciar.dishant.com.anunciar.UI;
 
-import android.Manifest;
-import android.content.ContentResolver;
-import android.content.ContentValues;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewGroupCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
-import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import anunciar.dishant.com.anunciar.Database.Announcement;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.R;
 
@@ -87,28 +73,26 @@ public class AnnouncementDetail extends AppCompatActivity {
                 deadline.setVisibility(View.INVISIBLE);
                 deadline.setClickable(false);
             } else {
-                //TODO set pretty date deadline
                 try {
                     Date now = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                     dead = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)));
-                    //String days = TimeUnit.MILLISECONDS.toDays()
-                    if ((dead.getTime() > now.getTime())) {
+                    if (TimeUnit.MILLISECONDS.toDays(now.getTime() - dead.getTime()) == 0){
+                        deadline.setText(R.string.today_deadline);
+                        deadline.setTextColor(Color.RED);
+                        deadline.setClickable(false);
+                    }
+                    else if ((dead.getTime() > now.getTime())) {
                         deadline.setText(TimeUnit.MILLISECONDS.toDays(dead.getTime() - now.getTime()) + " days left");
                         deadline.setTextColor(Color.parseColor("#F8876300"));
                     } else if ((dead.getTime() < now.getTime())) {
                         deadline.setText("Overdue " + TimeUnit.MILLISECONDS.toDays(now.getTime() - dead.getTime()) + " days ago");
                         deadline.setTextColor(Color.RED);
                         deadline.setClickable(false);
-                    } else {
-                        deadline.setText("Deadline is today!");
-                        deadline.setTextColor(Color.RED);
-                        deadline.setClickable(false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //deadline.setText(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)));
             }
             try {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -116,7 +100,7 @@ public class AnnouncementDetail extends AppCompatActivity {
                 Date now = new Date();
                 String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
                 if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
-                    created.setText("Today");
+                    created.setText(R.string.day_today);
                 } else {
                     created.setText(days);
                 }
@@ -133,7 +117,6 @@ public class AnnouncementDetail extends AppCompatActivity {
         else {
             String date = cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE));
             String[] days = date.split("-");
-            // yyyy-MM-dd
             Calendar begintime = Calendar.getInstance();
             begintime.set(Integer.parseInt(days[0]), Integer.parseInt(days[1])-1, Integer.parseInt(days[2]), 7, 30);
             Calendar endtime = Calendar.getInstance();

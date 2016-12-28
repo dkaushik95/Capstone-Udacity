@@ -1,69 +1,41 @@
 package anunciar.dishant.com.anunciar.UI;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
-import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.Transition;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import anunciar.dishant.com.anunciar.API.API_Calls;
-import anunciar.dishant.com.anunciar.Database.Announcement;
 import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
-import anunciar.dishant.com.anunciar.Database.AnnouncementTableDefinition;
-import anunciar.dishant.com.anunciar.Internet.VolleySingleton;
 import anunciar.dishant.com.anunciar.R;
 import anunciar.dishant.com.anunciar.Service.AnunciarSyncAdapter;
 import anunciar.dishant.com.anunciar.Service.CircleTransform;
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = null;
     RecyclerView mRecyclerView;
-    private String TAG = "Dishant";
     Cursor cursor;
     int localCount;
 
@@ -108,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
                     .into((ImageView) findViewById(R.id.account_photo));
         }
         catch (Exception e){
-            Log.e(TAG, "onCreate: Failed to fetch the user photo", null);
             Toast.makeText(this, "Failed to get profile picture", Toast.LENGTH_SHORT).show();
         }
 
@@ -128,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showAccount(View view) {
-        ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, new Pair<View, String>(findViewById(R.id.account_photo), "accountT"));
+        ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, new Pair<>(findViewById(R.id.account_photo), "accountT"));
         Intent intent = new Intent(MainActivity.this, ShowAccount.class);
         startActivity(intent, activityOptions.toBundle());
 
@@ -137,16 +108,16 @@ public class MainActivity extends AppCompatActivity {
 
     public class AnnouncementAdapter extends RecyclerView.Adapter < AnnouncementAdapter.MyViewHolder > {
         Cursor mCursor;
-        public class MyViewHolder extends RecyclerView.ViewHolder {
+        class MyViewHolder extends RecyclerView.ViewHolder {
             TextView title, createAt;
-            public MyViewHolder(View itemView) {
+            MyViewHolder(View itemView) {
                 super(itemView);
                 title = (TextView) itemView.findViewById(R.id.card_title);
                 createAt = (TextView) itemView.findViewById(R.id.card_created);
             }
         }
 
-        public AnnouncementAdapter(Cursor aCursor) {
+        AnnouncementAdapter(Cursor aCursor) {
             mCursor = aCursor;
             mCursor.moveToFirst();
         }
@@ -162,10 +133,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent list_item = new Intent(MainActivity.this, AnnouncementDetail.class);
                     int itempos = vh.getLayoutPosition();
                     mCursor.moveToPosition(itempos);
-                    Log.e(TAG, "onClick: Position: "+itempos,null);
-                    Log.e(TAG, "onClick: ID IS "+ mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)),null );
                     list_item.putExtra(AnnouncementTable.FIELD_ID, mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)));
-
                     startActivity(list_item, options.toBundle());
                 }
             });
@@ -176,14 +144,13 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(MyViewHolder holder, int position) {
             mCursor.moveToPosition(position);
             holder.title.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
-            //TODO fix the data format issues
             try {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0,10));
                 Date now = new Date();
                 String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
                 if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0){
-                    holder.createAt.setText("Today");
+                    holder.createAt.setText(R.string.day_today);
                 }
                 else {
                     holder.createAt.setText(days);
@@ -193,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
             catch (Exception j){
                 j.printStackTrace();
             }
-            //holder.createAt.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)));
         }
 
         @Override

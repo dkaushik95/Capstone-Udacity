@@ -89,12 +89,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
-            // Signed out, show unauthenticated UI.
-            //TODO remove this in release build
-            //Intent intent = new Intent(this, MainActivity.class);
-            //ImageView imageView = (ImageView)findViewById(R.id.Icon);
-            //ActivityOptionsCompat mActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(Login.this, imageView, "splash1");
-            //startActivity(intent);
             Log.e(TAG, "handleSignInResult: "+result.toString());
             Toast toast = Toast.makeText(getApplicationContext(), "Error Signing you in", Toast.LENGTH_SHORT);
             toast.show();

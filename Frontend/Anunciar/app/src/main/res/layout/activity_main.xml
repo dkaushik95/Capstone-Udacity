@@ -36,7 +36,7 @@
                 android:background="@mipmap/ic_launcher"
                 android:scaleX="5"
                 android:alpha="0.3"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:scaleY="5"
                 android:layout_marginBottom="200dp"
                 android:transitionName="splash1"

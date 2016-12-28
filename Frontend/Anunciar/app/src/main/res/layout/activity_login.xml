@@ -19,15 +19,29 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Anunciar"
+        android:text="@string/welcome_to_anunciar"
         android:layout_below="@+id/Icon"
         android:layout_centerHorizontal="true"
-        android:paddingTop="20dp"/>
+        android:id="@+id/login.welcome"
+        android:paddingTop="@dimen/default_value"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login.welcome"
+        android:layout_marginTop="50dp"
+        android:textAlignment="center"
+        android:padding="@dimen/default_value"
+        android:id="@+id/anunciar_desc"
+        android:background="#FFF"
+        android:text="@string/anunciar_description"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_value"
+        android:layout_below="@+id/anunciar_desc"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 

@@ -79,6 +79,22 @@
         </activity>
         <activity android:name=".UI.ShowAccount"></activity>
 
+        <!--For Widget-->
+        <receiver android:name=".Database.AnunciarWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="com.android.stockhawk.ACTION_DATA_UPDATED"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/anunciar_appwidget_info"/>
+        </receiver>
+        <service
+            android:name=".Service.AnunciarWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+
     </application>
 
 </manifest>

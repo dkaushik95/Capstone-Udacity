@@ -19,4 +19,20 @@
     <!-- SyncAdapter related -->
     <string name="sync_account_type">anunciar.example.com</string>
     <string name="content_authority">anunciar.dishant.com.anunciar.Database</string>
+    <string name="empty_view_text">Cannot get Announcements right now</string>
+    <string name="day_today">Today</string>
+    <string name="today_deadline">Deadline is today!</string>
+    <string name="detail_title">Detail Title</string>
+    <string name="dd_mm_yyyy">dd/mm/yyyy</string>
+    <string name="welcome_to_anunciar">Welcome to Anunciar</string>
+    <string name="anunciar_description">Anunciar is a platform to get all new announcemens from your SR/CR right into your phone or web. To use the services, please sign in and get started.</string>
+    <string name="user_name">User Name</string>
+    <string name="email">Email</string>
+    <string name="userid">userID</string>
+    <string name="logout">Logout</string>
+    <string name="title">Title</string>
+    <string name="created_at">created_at</string>
+    <string name="subtitle">The Announcement App</string>
+    <string name="dummy_widget_text">Announcement text will be big and will show here</string>
+    <string name="dummy_widget_created_text">10 days ago</string>
 </resources>

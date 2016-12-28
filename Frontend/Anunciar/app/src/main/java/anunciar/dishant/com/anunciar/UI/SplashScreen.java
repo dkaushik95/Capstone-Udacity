@@ -37,7 +37,6 @@ public class SplashScreen extends Activity {
         Thread timerThread = new Thread(){
             public void run(){
                 try {
-                    //TODO change the default to false
                     if (mSharedPreferences.getBoolean("isSignedIn", false)){
                         sleep(1000);
                     }
@@ -53,7 +52,7 @@ public class SplashScreen extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SplashScreen.this, new Pair<View, String>((View)findViewById(R.id.imageView), "splash1"));
+                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SplashScreen.this, new Pair<>(findViewById(R.id.imageView), "splash1"));
                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
 
                                 startActivity(intent, activityOptions.toBundle());
@@ -65,7 +64,7 @@ public class SplashScreen extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SplashScreen.this, new Pair<View, String>((View)findViewById(R.id.imageView), "splash1"));
+                                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(SplashScreen.this, new Pair<>(findViewById(R.id.imageView), "splash1"));
                                 Intent intent = new Intent(SplashScreen.this, Login.class);
                                 startActivity(intent, activityOptions.toBundle());
                             }
