@@ -17,4 +17,4 @@ The frontend folder contains the Android Application which interacts with the AP
 
 ##The details
 
->[Check this for details](..Capstone_Anunciar.pdf)
+>[Check this for details](https://github.com/dkaushik95/Capstone/blob/master/Capstone_Anunciar.pdf)
