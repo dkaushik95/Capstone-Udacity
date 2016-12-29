@@ -1,4 +1,5 @@
 package anunciar.dishant.com.anunciar.Service;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -40,6 +41,7 @@ public class CircleTransform implements Transformation {
         squaredBitmap.recycle();
         return bitmap;
     }
+
     @Override
     public String key() {
         return "circle";

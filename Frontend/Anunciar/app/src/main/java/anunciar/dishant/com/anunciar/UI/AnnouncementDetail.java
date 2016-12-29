@@ -80,12 +80,11 @@ public class AnnouncementDetail extends AppCompatActivity {
                     Date now = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                     dead = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)));
-                    if (TimeUnit.MILLISECONDS.toDays(now.getTime() - dead.getTime()) == 0){
+                    if (TimeUnit.MILLISECONDS.toDays(now.getTime() - dead.getTime()) == 0) {
                         deadline.setText(R.string.today_deadline);
                         deadline.setTextColor(Color.RED);
                         deadline.setClickable(false);
-                    }
-                    else if ((dead.getTime() > now.getTime())) {
+                    } else if ((dead.getTime() > now.getTime())) {
                         deadline.setText(TimeUnit.MILLISECONDS.toDays(dead.getTime() - now.getTime()) + " days left");
                         deadline.setTextColor(Color.parseColor("#F8876300"));
                     } else if ((dead.getTime() < now.getTime())) {
@@ -117,16 +116,15 @@ public class AnnouncementDetail extends AppCompatActivity {
     }
 
     public void addCalendar(View view) {
-        if (cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)).equals("null")){
+        if (cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)).equals("null")) {
             Toast.makeText(getApplicationContext(), "Deadline is empty", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             String date = cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE));
             String[] days = date.split("-");
             Calendar begintime = Calendar.getInstance();
-            begintime.set(Integer.parseInt(days[0]), Integer.parseInt(days[1])-1, Integer.parseInt(days[2]), 7, 30);
+            begintime.set(Integer.parseInt(days[0]), Integer.parseInt(days[1]) - 1, Integer.parseInt(days[2]), 7, 30);
             Calendar endtime = Calendar.getInstance();
-            endtime.set(Integer.parseInt(days[0]), Integer.parseInt(days[1])-1, Integer.parseInt(days[2]), 8, 30);
+            endtime.set(Integer.parseInt(days[0]), Integer.parseInt(days[1]) - 1, Integer.parseInt(days[2]), 8, 30);
             Intent intent = new Intent(Intent.ACTION_INSERT)
                     .setData(CalendarContract.Events.CONTENT_URI)
                     .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begintime.getTimeInMillis())

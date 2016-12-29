@@ -27,29 +27,29 @@ public class AnunciarWidgetService extends RemoteViewsService {
     }
 }
 
-class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
+class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static int mCount;
     private Context mContext;
     private int mAppWidgetId;
     private Cursor cursor;
 
-    public StackRemoteViewsFactory(Context context, Intent intent){
+    public StackRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
 
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
-    public void onCreate(){
+    public void onCreate() {
 
     }
 
-    public int getmCount(){
+    public int getmCount() {
         return mCount;
     }
 
-    public RemoteViews getViewAt(int position){
+    public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.stack_item);
-        if (cursor == null || cursor.getCount() == 0){
+        if (cursor == null || cursor.getCount() == 0) {
             rv.setEmptyView(R.id.stack_view, R.id.empty_view);
             return null;
         }
@@ -58,17 +58,15 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            Date past = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0,10));
+            Date past = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
             Date now = new Date();
             String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
-            if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0){
+            if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
                 rv.setTextViewText(R.id.widgetCreated, "Today");
-            }
-            else {
+            } else {
                 rv.setTextViewText(R.id.widgetCreated, days);
             }
-        }
-        catch (Exception j){
+        } catch (Exception j) {
             j.printStackTrace();
         }
 
@@ -84,25 +82,25 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
         return null;
     }
 
-    public int getViewTypeCount(){
+    public int getViewTypeCount() {
         return 1;
     }
 
-    public long getItemId(int position){
+    public long getItemId(int position) {
         return position;
     }
 
-    public boolean hasStableIds(){
+    public boolean hasStableIds() {
         return true;
     }
 
-    public void onDataSetChanged(){
+    public void onDataSetChanged() {
         final long identityToken = Binder.clearCallingIdentity();
 
-        cursor = mContext.getContentResolver().query(AnnouncementTable.CONTENT_URI, new String[]{ AnnouncementTable.FIELD_ID, AnnouncementTable.FIELD_TITLE, AnnouncementTable.FIELD_CREATED_AT},null, null, AnnouncementTable.FIELD_CREATED_AT);
+        cursor = mContext.getContentResolver().query(AnnouncementTable.CONTENT_URI, new String[]{AnnouncementTable.FIELD_ID, AnnouncementTable.FIELD_TITLE, AnnouncementTable.FIELD_CREATED_AT}, null, null, AnnouncementTable.FIELD_CREATED_AT);
         Binder.restoreCallingIdentity(identityToken);
 
-        if (cursor != null && cursor.getCount() != 0){
+        if (cursor != null && cursor.getCount() != 0) {
             mCount = cursor.getCount();
         }
     }

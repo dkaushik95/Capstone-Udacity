@@ -9,17 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:loopViews="true"/>
+        android:loopViews="true" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#4D000000"
+        android:contentDescription="@string/empty_view_text"
         android:gravity="center"
         android:text="@string/empty_view_text"
         android:textColor="#FFF"
-        android:contentDescription="@string/empty_view_text"
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 </FrameLayout>

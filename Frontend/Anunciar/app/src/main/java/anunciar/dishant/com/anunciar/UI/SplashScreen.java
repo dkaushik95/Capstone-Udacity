@@ -5,12 +5,10 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.util.Pair;
-import android.view.View;
 
 import anunciar.dishant.com.anunciar.R;
 import anunciar.dishant.com.anunciar.Service.AnunciarSyncAdapter;
@@ -20,6 +18,7 @@ import anunciar.dishant.com.anunciar.Service.AnunciarSyncAdapter;
  */
 public class SplashScreen extends Activity {
     SharedPreferences mSharedPreferences = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,21 +33,18 @@ public class SplashScreen extends Activity {
         getWindow().setExitTransition(exitTransistion);
 
         mSharedPreferences = getSharedPreferences("anunciar.dishant.com.anunciar", MODE_PRIVATE);
-        Thread timerThread = new Thread(){
-            public void run(){
+        Thread timerThread = new Thread() {
+            public void run() {
                 try {
-                    if (mSharedPreferences.getBoolean("isSignedIn", false)){
+                    if (mSharedPreferences.getBoolean("isSignedIn", false)) {
                         sleep(1000);
-                    }
-                    else{
+                    } else {
                         sleep(3000);
                     }
-                }
-                catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-                finally {
-                    if (mSharedPreferences.getBoolean("isSignedIn", false)){
+                } finally {
+                    if (mSharedPreferences.getBoolean("isSignedIn", false)) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -59,8 +55,7 @@ public class SplashScreen extends Activity {
                             }
                         });
 
-                    }
-                    else {
+                    } else {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -75,6 +70,7 @@ public class SplashScreen extends Activity {
         };
         timerThread.start();
     }
+
     @Override
     protected void onPause() {
         super.onPause();

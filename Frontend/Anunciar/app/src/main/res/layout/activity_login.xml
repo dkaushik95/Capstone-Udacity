@@ -9,44 +9,46 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="anunciar.dishant.com.anunciar.UI.Login">
+
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
-        android:layout_centerHorizontal="true"
         android:id="@+id/Icon"
-        android:transitionName="splash1"
-        android:contentDescription="@string/access_logo_description" />
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_to_anunciar"
-        android:layout_below="@+id/Icon"
         android:layout_centerHorizontal="true"
-        android:id="@+id/login.welcome"
-        android:contentDescription="@string/welcome_to_anunciar"
-        android:paddingTop="@dimen/default_value"/>
+        android:contentDescription="@string/access_logo_description"
+        android:src="@mipmap/ic_launcher"
+        android:transitionName="splash1" />
 
     <TextView
+        android:id="@+id/login.welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Icon"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/welcome_to_anunciar"
+        android:paddingTop="@dimen/default_value"
+        android:text="@string/welcome_to_anunciar" />
+
+    <TextView
+        android:id="@+id/anunciar_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login.welcome"
         android:layout_marginTop="50dp"
-        android:textAlignment="center"
-        android:padding="@dimen/default_value"
-        android:id="@+id/anunciar_desc"
         android:background="#FFF"
         android:contentDescription="@string/anunciar_description"
-        android:text="@string/anunciar_description"/>
+        android:padding="@dimen/default_value"
+        android:text="@string/anunciar_description"
+        android:textAlignment="center" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_value"
-        android:contentDescription="@string/access_sign_in_button"
         android:layout_below="@+id/anunciar_desc"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_marginTop="@dimen/default_value"
+        android:contentDescription="@string/access_sign_in_button" />
 
 </RelativeLayout>

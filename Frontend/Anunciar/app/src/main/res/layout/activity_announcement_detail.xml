@@ -1,80 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/background_light"
     android:fitsSystemWindows="true">
+
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/detail.appbar"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:id="@+id/detail.appbar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true"
-        >
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
         <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/detail.collapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/detail.collapsing"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <TextView
+                android:id="@+id/announcement_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:layout_margin="@dimen/default_value"
                 android:text="@string/detail_title"
                 android:textSize="30sp"
-                android:transitionName="titleT"
-                android:layout_margin="@dimen/default_value"
-                android:layout_gravity="center|start"
-                android:id="@+id/announcement_title"/>
+                android:transitionName="titleT" />
+
             <TextView
+                android:id="@+id/announcement_created"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/announcement_created"
-                android:transitionName="createdT"
+                android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/default_value"
                 android:text="@string/dd_mm_yyyy"
-                android:layout_gravity="bottom|end"
-                />
+                android:transitionName="createdT" />
+
             <android.support.v7.widget.Toolbar
+                android:id="@+id/detail.toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin"
-                android:id="@+id/detail.toolbar"
-                />
+                app:layout_collapseMode="pin" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:transitionGroup="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/detail.details"
+            android:layout_width="match_parent"
             android:layout_height="270dp">
-                <TextView
-                    android:padding="20dp"
-                    android:layout_width="match_parent"
-                    android:textSize="20sp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/announcement_description"/>
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:textColorHighlight="#000"
-                    android:layout_marginBottom="30dp"
-                    android:id="@+id/announcement_deadline"
-                    android:background="@drawable/ripple"
-                    android:onClick="addCalendar"
-                    android:contentDescription="@string/accessibility_add_calendar"
-                    />
+
+            <TextView
+                android:id="@+id/announcement_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/announcement_deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/ripple"
+                android:contentDescription="@string/accessibility_add_calendar"
+                android:onClick="addCalendar"
+                android:textColorHighlight="#000" />
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

@@ -17,7 +17,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,12 +47,13 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
     String TAG = "Anunciar Service";
 
     public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     int localCount;
     SharedPreferences prefs;
 
     public final String LOG_TAG = AnunciarSyncAdapter.class.getSimpleName();
+
     public AnunciarSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
     }
@@ -92,7 +92,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET
                     , API_Calls.GET_ALL_ANNOUNCMENT
                     , null
-                    , new Response.Listener <JSONArray> () {
+                    , new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     for (int i = 0; i < response.length(); i++) {
@@ -110,7 +110,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                                     .insert(AnnouncementTable.CONTENT_URI,
                                             announcement);
                         } catch (Exception e) {
-                            Log.e(TAG, "onResponse: "+e.getMessage(), null);
+                            Log.e(TAG, "onResponse: " + e.getMessage(), null);
                         }
                     }
                 }
@@ -118,7 +118,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
+                    Log.e(TAG, "onErrorResponse: " + error.getMessage(), null);
                 }
             });
             VolleySingleton.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
@@ -132,18 +132,16 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                 public void onResponse(String response) {
                     try {
                         prefs.edit().putInt("GlobalCount", Integer.parseInt(response)).apply();
-                    }
-                    catch (Exception e){
-                        Log.e(TAG, "onResponse: Couldn't GET count",null);
-                    }
-                    finally {
-                        if (localCount<prefs.getInt("GlobalCount",0)){
+                    } catch (Exception e) {
+                        Log.e(TAG, "onResponse: Couldn't GET count", null);
+                    } finally {
+                        if (localCount < prefs.getInt("GlobalCount", 0)) {
                             //TODO add only new announcement here
-                            final int difference = prefs.getInt("GlobalCount",0) - localCount;
+                            final int difference = prefs.getInt("GlobalCount", 0) - localCount;
                             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET
                                     , API_Calls.GET_ALL_ANNOUNCMENT
                                     , null
-                                    , new Response.Listener < JSONArray > () {
+                                    , new Response.Listener<JSONArray>() {
                                 @Override
                                 public void onResponse(JSONArray response) {
                                     for (int i = 0; i < difference; i++) {
@@ -161,7 +159,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                                                     .insert(AnnouncementTable.CONTENT_URI,
                                                             announcement);
                                         } catch (Exception e) {
-                                            Log.e(TAG, "onResponse: "+e.getMessage(), null);
+                                            Log.e(TAG, "onResponse: " + e.getMessage(), null);
                                         }
                                     }
                                 }
@@ -169,14 +167,14 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.e(TAG, "onErrorResponse: "+error.getMessage(),null );
+                                    Log.e(TAG, "onErrorResponse: " + error.getMessage(), null);
                                 }
                             });
                             VolleySingleton.getInstance(getContext().getApplicationContext()).addToRequestQueue(jsonArrayRequest);
                             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
                                     .setSmallIcon(R.drawable.ic_stat_anunciar_icon_notification)
                                     .setContentTitle("Anunciar calls!")
-                                    .setContentText("You have "+ difference + " new Announcements! Click to see the announcements.");
+                                    .setContentText("You have " + difference + " new Announcements! Click to see the announcements.");
                             Intent resultIntent = new Intent(getContext(), MainActivity.class);
 
                             TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
@@ -191,18 +189,17 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                             int mId = 1;
                             managerCompat.notify(mId, mBuilder.build());
 
-                            Toast.makeText(getContext().getApplicationContext(), difference+" new notifications!", Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "onCreate: GETTING NEW DATA",null);
-                        }
-                        else {
-                            Log.e(TAG, "onCreate: SHOWING OFFLINE DATA :) " + localCount+ " :: " + prefs.getInt("GlobalCount", 0),null );
+                            Toast.makeText(getContext().getApplicationContext(), difference + " new notifications!", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "onCreate: GETTING NEW DATA", null);
+                        } else {
+                            Log.e(TAG, "onCreate: SHOWING OFFLINE DATA :) " + localCount + " :: " + prefs.getInt("GlobalCount", 0), null);
                         }
                     }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, "onErrorResponse: " +error.getMessage(), null);
+                    Log.e(TAG, "onErrorResponse: " + error.getMessage(), null);
                 }
             });
             VolleySingleton.getInstance(getContext()).addToRequestQueue(mStringRequest);
@@ -230,7 +227,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                 context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
 
         // If the password doesn't exist, the account doesn't exist
-        if ( null == accountManager.getPassword(newAccount) ) {
+        if (null == accountManager.getPassword(newAccount)) {
 
         /*
          * Add the account and account type, no password or user data
@@ -250,6 +247,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
         }
         return newAccount;
     }
+
     private static void onAccountCreated(Account newAccount, Context context) {
         /*
          * Since we've created an account

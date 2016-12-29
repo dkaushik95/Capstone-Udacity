@@ -1,91 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:transitionGroup="false"
     android:background="@android:color/background_light"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:transitionGroup="false">
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/main.appbar"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
         <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/main.collapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/main.collapsing"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <ImageView
+                android:id="@+id/account_photo"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:id="@+id/account_photo"
                 android:clickable="true"
+                android:contentDescription="@string/access_show_profile"
                 android:onClick="showAccount"
-                android:transitionName="accountT"
-                android:contentDescription="@string/access_show_profile" />
+                android:scaleType="centerCrop"
+                android:transitionName="accountT" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/ic_launcher"
-                android:scaleX="5"
-                android:alpha="0.3"
                 android:layout_gravity="bottom|end"
-                android:scaleY="5"
                 android:layout_marginBottom="200dp"
-                android:transitionName="splash1"
+                android:alpha="0.3"
+                android:background="@mipmap/ic_launcher"
+                android:contentDescription="@string/access_logo_description"
                 android:scaleType="fitCenter"
-                android:contentDescription="@string/access_logo_description" />
+                android:scaleX="5"
+                android:scaleY="5"
+                android:transitionName="splash1" />
+
             <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:contentDescription="@string/app_name"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin"
-                app:title="@string/app_name"
-                android:contentDescription="@string/app_name"/>
+                app:title="@string/app_name" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/announcement_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/announcement_list">
-            </android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.NestedScrollView>
+
     <RelativeLayout
-        android:layout_width="match_parent"
         android:id="@+id/empty_view_main"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ImageView
+            android:id="@+id/error_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_error_black"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             android:scaleX="3"
-            android:translationY="55dp"
             android:scaleY="3"
-            android:id="@+id/error_pic"
-            />
+            android:src="@drawable/ic_error_black"
+            android:translationY="55dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/error_pic"
             android:layout_marginTop="80dp"
-            android:textAlignment="center"
             android:padding="@dimen/big_padding"
-            android:text="@string/error_text"/>
+            android:text="@string/error_text"
+            android:textAlignment="center" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
 

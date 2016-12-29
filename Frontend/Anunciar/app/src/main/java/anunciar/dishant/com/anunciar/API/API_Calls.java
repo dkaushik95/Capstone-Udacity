@@ -6,8 +6,9 @@ package anunciar.dishant.com.anunciar.API;
 
 public class API_Calls {
     public static final String GET_ALL_ANNOUNCMENT = "https://anunciar-backend.herokuapp.com/api/v1/announcements";
-    public static String GET_ANNOUNCEMENT(int key){
-        return GET_ALL_ANNOUNCMENT+"/"+key;
-    }
     public static final String GET_COUNT = "https://anunciar-backend.herokuapp.com/api/v1/counters/count";
+
+    public static String GET_ANNOUNCEMENT(int key) {
+        return GET_ALL_ANNOUNCMENT + "/" + key;
+    }
 }

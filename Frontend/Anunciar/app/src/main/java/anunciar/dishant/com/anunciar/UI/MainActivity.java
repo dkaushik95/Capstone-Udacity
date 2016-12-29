@@ -4,9 +4,9 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Slide;
@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         finish();
         System.exit(0);
     }
-    public void getData(){
+
+    public void getData() {
         AnunciarSyncAdapter.syncImmediately(this);
     }
 
@@ -79,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     .transform(new CircleTransform())
                     .centerCrop()
                     .into((ImageView) findViewById(R.id.account_photo));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, "Failed to get profile picture", Toast.LENGTH_SHORT).show();
         }
 
@@ -93,15 +92,14 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 null,
                 null,
-                AnnouncementTable.FIELD_CREATED_AT+ " DESC");
+                AnnouncementTable.FIELD_CREATED_AT + " DESC");
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
-        RelativeLayout emptyView = (RelativeLayout)findViewById(R.id.empty_view_main);
-        if (cursor.getCount() == 0){
+        RelativeLayout emptyView = (RelativeLayout) findViewById(R.id.empty_view_main);
+        if (cursor.getCount() == 0) {
             mRecyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             mRecyclerView.setVisibility(View.VISIBLE);
             emptyView.setVisibility(View.GONE);
         }
@@ -116,10 +114,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class AnnouncementAdapter extends RecyclerView.Adapter < AnnouncementAdapter.MyViewHolder > {
+    public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.MyViewHolder> {
         Cursor mCursor;
+
         class MyViewHolder extends RecyclerView.ViewHolder {
             TextView title, createAt;
+
             MyViewHolder(View itemView) {
                 super(itemView);
                 title = (TextView) itemView.findViewById(R.id.card_title);
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public MyViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-            View mView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.announcement_list_item,null);
+            View mView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.announcement_list_item, null);
             final MyViewHolder vh = new MyViewHolder(mView);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,20 +157,18 @@ public class MainActivity extends AppCompatActivity {
             holder.title.setContentDescription(holder.title.getText());
             try {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0,10));
+                Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
                 Date now = new Date();
                 String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
-                if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0){
+                if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
                     holder.createAt.setText(R.string.day_today);
 
-                }
-                else {
+                } else {
                     holder.createAt.setText(days);
                 }
                 holder.createAt.setContentDescription(holder.createAt.getText());
                 notifyItemInserted(position);
-            }
-            catch (Exception j){
+            } catch (Exception j) {
                 j.printStackTrace();
             }
         }

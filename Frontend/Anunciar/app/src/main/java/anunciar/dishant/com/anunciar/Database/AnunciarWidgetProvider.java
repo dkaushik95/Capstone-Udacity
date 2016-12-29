@@ -38,7 +38,7 @@ public class AnunciarWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (ACTION_DATA_UPDATED.equals(intent.getAction())){
+        if (ACTION_DATA_UPDATED.equals(intent.getAction())) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));
@@ -49,7 +49,7 @@ public class AnunciarWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int i = 0; i< appWidgetIds.length; i++){
+        for (int i = 0; i < appWidgetIds.length; i++) {
 
             Intent in = new Intent(context, AnunciarSyncService.class);
             context.startService(in);

@@ -1,4 +1,3 @@
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/stackWidgetItem"
     android:layout_width="250dp"
@@ -6,28 +5,27 @@
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     android:padding="20dp"
-    android:paddingStart="20dp"
     android:paddingEnd="40dp"
-    >
+    android:paddingStart="20dp">
 
     <TextView
         android:id="@+id/widgetTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:textAlignment="center"
         android:text="@string/dummy_widget_text"
+        android:textAlignment="center"
         android:textColor="#FFF"
         android:textSize="16sp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
+
     <TextView
+        android:id="@+id/widgetCreated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/widgetCreated"
-        android:text="@string/dummy_widget_created_text"
-        android:textSize="12sp"
-        android:textColor="#FFF"
+        android:layout_gravity="bottom|end"
         android:layout_marginTop="10dp"
-        android:layout_gravity="bottom|end"/>
+        android:text="@string/dummy_widget_created_text"
+        android:textColor="#FFF"
+        android:textSize="12sp" />
 </LinearLayout>
