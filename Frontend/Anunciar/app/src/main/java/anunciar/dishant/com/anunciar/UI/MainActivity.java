@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     Cursor cursor;
     int localCount;
+    private AdView mAdView;
 
     @Override
     public void onBackPressed() {
@@ -70,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
         reenterTrans.setDuration(300);
         reenterTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setReenterTransition(reenterTrans);
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
 
         //Account display_pic
 

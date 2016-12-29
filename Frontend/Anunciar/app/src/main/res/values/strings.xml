@@ -42,4 +42,5 @@
     <string name="sync_profile_pic">This is your profile picture</string>
     <string name="access_logout_button">Click here to log out from the application</string>
     <string name="error_text">There is an error getting data from the API, please check your internet connection and restart the app.</string>
+    <string name="banner_ad_unit_id">ca-app-pub-9738343196282341/1164447919</string>
 </resources>
