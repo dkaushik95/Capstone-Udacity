@@ -30,13 +30,12 @@ public class AnunciarWidgetService extends RemoteViewsService {
 class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static int mCount;
     private Context mContext;
-    private int mAppWidgetId;
     private Cursor cursor;
 
     public StackRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
 
-        mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        int mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     public void onCreate() {
@@ -60,9 +59,9 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date past = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
             Date now = new Date();
-            String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
+            String days = mContext.getString(R.string.days_ago_in_words, TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()));
             if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
-                rv.setTextViewText(R.id.widgetCreated, "Today");
+                rv.setTextViewText(R.id.widgetCreated, mContext.getString(R.string.day_today));
             } else {
                 rv.setTextViewText(R.id.widgetCreated, days);
             }

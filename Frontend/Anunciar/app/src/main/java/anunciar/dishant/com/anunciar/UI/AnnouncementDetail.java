@@ -37,12 +37,10 @@ public class AnnouncementDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_announcement_detail);
         Transition enterTrans = new Slide(Gravity.RIGHT);
-        enterTrans.setDuration(300);
         enterTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setEnterTransition(enterTrans);
 
         Transition returnTrans = new Slide(Gravity.RIGHT);
-        returnTrans.setDuration(300);
         returnTrans.setInterpolator(new FastOutSlowInInterpolator());
         getWindow().setReturnTransition(returnTrans);
 
@@ -85,10 +83,10 @@ public class AnnouncementDetail extends AppCompatActivity {
                         deadline.setTextColor(Color.RED);
                         deadline.setClickable(false);
                     } else if ((dead.getTime() > now.getTime())) {
-                        deadline.setText(TimeUnit.MILLISECONDS.toDays(dead.getTime() - now.getTime()) + " days left");
+                        deadline.setText(getString(R.string.days_left_deadline, TimeUnit.MILLISECONDS.toDays(dead.getTime() - now.getTime())));
                         deadline.setTextColor(Color.parseColor("#F8876300"));
                     } else if ((dead.getTime() < now.getTime())) {
-                        deadline.setText("Overdue " + TimeUnit.MILLISECONDS.toDays(now.getTime() - dead.getTime()) + " days ago");
+                        deadline.setText(getString(R.string.overdue_days, TimeUnit.MILLISECONDS.toDays(now.getTime() - dead.getTime())));
                         deadline.setTextColor(Color.RED);
                         deadline.setClickable(false);
                     }
@@ -100,7 +98,7 @@ public class AnnouncementDetail extends AppCompatActivity {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date past = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
                 Date now = new Date();
-                String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
+                String days = getString(R.string.days_ago_in_words, TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()));
                 if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
                     created.setText(R.string.day_today);
 
@@ -117,7 +115,7 @@ public class AnnouncementDetail extends AppCompatActivity {
 
     public void addCalendar(View view) {
         if (cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE)).equals("null")) {
-            Toast.makeText(getApplicationContext(), "Deadline is empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No deadline", Toast.LENGTH_SHORT).show();
         } else {
             String date = cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DEADLINE));
             String[] days = date.split("-");
@@ -131,7 +129,7 @@ public class AnnouncementDetail extends AppCompatActivity {
                     .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endtime.getTimeInMillis())
                     .putExtra(CalendarContract.Events.TITLE, cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)))
                     .putExtra(CalendarContract.Events.DESCRIPTION, cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_DESCRIPTION)))
-                    .putExtra(CalendarContract.Events.EVENT_LOCATION, "College")
+                    .putExtra(CalendarContract.Events.EVENT_LOCATION, getString(R.string.college))
                     .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
             startActivity(intent);
         }

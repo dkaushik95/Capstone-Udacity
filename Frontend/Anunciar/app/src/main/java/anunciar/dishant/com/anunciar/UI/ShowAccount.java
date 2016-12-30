@@ -25,14 +25,14 @@ public class ShowAccount extends AppCompatActivity {
 
         Transition transition = new Slide(Gravity.TOP);
         getWindow().setEnterTransition(transition);
-        preferences = getSharedPreferences("anunciar.dishant.com.anunciar", MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.pref_package), MODE_PRIVATE);
 
-        ((TextView) findViewById(R.id.account_name)).setText("Name : " + preferences.getString("user_displayName", ""));
-        ((TextView) findViewById(R.id.account_mail)).setText("Email : " + preferences.getString("user_email", ""));
-        ((TextView) findViewById(R.id.userid)).setText("UserId : " + preferences.getString("user_ID", ""));
-        (findViewById(R.id.account_name)).setContentDescription("Name : " + preferences.getString("user_displayName", ""));
-        (findViewById(R.id.account_mail)).setContentDescription("Email : " + preferences.getString("user_email", ""));
-        (findViewById(R.id.userid)).setContentDescription("UserId : " + preferences.getString("user_ID", ""));
+        ((TextView) findViewById(R.id.account_name)).setText(getString(R.string.name_ph, preferences.getString(getString(R.string.user_displayName), "")));
+        ((TextView) findViewById(R.id.account_mail)).setText(getString(R.string.email_ph, preferences.getString(getString(R.string.user_email), "")));
+        ((TextView) findViewById(R.id.userid)).setText(getString(R.string.user_id_ph, preferences.getString(getString(R.string.user_ID), "")));
+        (findViewById(R.id.account_name)).setContentDescription("Name is " + preferences.getString(getString(R.string.user_displayName), ""));
+        (findViewById(R.id.account_mail)).setContentDescription("Email is " + preferences.getString(getString(R.string.user_email), ""));
+        (findViewById(R.id.userid)).setContentDescription("UserId is " + preferences.getString(getString(R.string.user_ID), ""));
 
         Picasso.with(getApplicationContext())
                 .load(preferences.getString("user_photo", ""))

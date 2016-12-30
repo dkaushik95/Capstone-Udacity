@@ -85,18 +85,18 @@ public class Login extends AppCompatActivity implements GoogleApiClient.OnConnec
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Login.this, new Pair<View, String>((View) findViewById(R.id.Icon), "splash1"));
-            SharedPreferences sp = getSharedPreferences("anunciar.dishant.com.anunciar", MODE_PRIVATE);
-            sp.edit().putBoolean("isSignedIn", true).apply();
-            sp.edit().putString("user_displayName", acct.getDisplayName()).apply();
-            sp.edit().putString("user_email", acct.getEmail()).apply();
-            sp.edit().putString("user_ID", acct.getId()).apply();
-            sp.edit().putString("user_photo", acct.getPhotoUrl().toString()).apply();
+            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(Login.this, new Pair<View, String>(findViewById(R.id.Icon), "splash1"));
+            SharedPreferences sp = getSharedPreferences(getString(R.string.pref_package), MODE_PRIVATE);
+            sp.edit().putBoolean(getString(R.string.is_signed_in), true).apply();
+            sp.edit().putString(getString(R.string.user_displayName), acct.getDisplayName()).apply();
+            sp.edit().putString(getString(R.string.user_email), acct.getEmail()).apply();
+            sp.edit().putString(getString(R.string.user_ID), acct.getId()).apply();
+            sp.edit().putString(getString(R.string.user_photo), acct.getPhotoUrl().toString()).apply();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } else {
             Log.e(TAG, "handleSignInResult: " + result.toString());
-            Toast toast = Toast.makeText(getApplicationContext(), "Error Signing you in", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), R.string.sign_in_error, Toast.LENGTH_SHORT);
             toast.show();
         }
     }

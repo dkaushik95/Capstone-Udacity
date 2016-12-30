@@ -1,19 +1,7 @@
 <resources>
     <string name="app_name">Anunciar</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="title_activity_announcement_detail">AnnouncementDetail</string>
 
     <!-- SyncAdapter related -->
@@ -43,4 +31,21 @@
     <string name="access_logout_button">Click here to log out from the application</string>
     <string name="error_text">There is an error getting data from the API, please check your internet connection and restart the app.</string>
     <string name="banner_ad_unit_id">ca-app-pub-9738343196282341/1164447919</string>
+    <string name="unknown_id_log">"Unknown loader id: "</string>
+    <string name="days_ago_in_words">%d days ago"</string>
+    <string name="failed_to_get_profile_pic">Failed to get profile picture</string>
+    <string name="user_photo_pref">user_photo</string>
+    <string name="pref_package">anunciar.dishant.com.anunciar</string>
+    <string name="overdue_days">Overdue %d days ago</string>
+    <string name="college">College</string>
+    <string name="is_signed_in">isSignedIn</string>
+    <string name="user_displayName">user_displayName</string>
+    <string name="user_email">user_email</string>
+    <string name="user_ID">user_ID</string>
+    <string name="user_photo">user_photo</string>
+    <string name="sign_in_error">Error Signing you in</string>
+    <string name="name_ph">"Name : %s"</string>
+    <string name="email_ph">Email: %s</string>
+    <string name="user_id_ph">User ID: %s</string>
+    <string name="days_left_deadline"> %d days left</string>
 </resources>

@@ -33,9 +33,9 @@ public class SplashScreen extends Activity {
 
         getWindow().setExitTransition(exitTransistion);
 
-        mSharedPreferences = getSharedPreferences("anunciar.dishant.com.anunciar", MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences(getString(R.string.pref_package), MODE_PRIVATE);
         int time = 0;
-        if (mSharedPreferences.getBoolean("isSignedIn", false)) {
+        if (mSharedPreferences.getBoolean(getString(R.string.is_signed_in), false)) {
             time = 1000;
         } else {
             time = 3000;
@@ -44,7 +44,7 @@ public class SplashScreen extends Activity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mSharedPreferences.getBoolean("isSignedIn", false)) {
+                if (mSharedPreferences.getBoolean(getString(R.string.is_signed_in), false)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

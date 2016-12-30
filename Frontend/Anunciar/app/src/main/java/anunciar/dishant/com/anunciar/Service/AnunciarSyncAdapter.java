@@ -78,10 +78,9 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "onPerformSync Called.");
-
         prefs = getContext().getSharedPreferences("anunciar.dishant.com.anunciar"
                 , MODE_PRIVATE);
-        Cursor cursor = getContext().getContentResolver().query(AnnouncementTable.CONTENT_URI
+        final Cursor cursor = getContext().getContentResolver().query(AnnouncementTable.CONTENT_URI
                 , null
                 , null
                 , null
@@ -111,6 +110,8 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                                             announcement);
                         } catch (Exception e) {
                             Log.e(TAG, "onResponse: " + e.getMessage(), null);
+                        }finally {
+                            cursor.close();
                         }
                     }
                 }
