@@ -72,7 +72,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         Intent announcementDetailIntent = new Intent();
 
-        announcementDetailIntent.putExtra(AnnouncementTable.FIELD_ID, cursor.getInt(cursor.getColumnIndex(AnnouncementTable.FIELD_ID)));
+        announcementDetailIntent.putExtra(AnnouncementTable.FIELD__ID, cursor.getInt(cursor.getColumnIndex(AnnouncementTable.FIELD__ID)));
         rv.setOnClickFillInIntent(R.id.stackWidgetItem, announcementDetailIntent);
         return rv;
     }
@@ -97,7 +97,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         final long identityToken = Binder.clearCallingIdentity();
 
-        cursor = mContext.getContentResolver().query(AnnouncementTable.CONTENT_URI, new String[]{AnnouncementTable.FIELD_ID, AnnouncementTable.FIELD_TITLE, AnnouncementTable.FIELD_CREATED_AT}, null, null, AnnouncementTable.FIELD_CREATED_AT);
+        cursor = mContext.getContentResolver().query(AnnouncementTable.CONTENT_URI, new String[]{AnnouncementTable.FIELD__ID, AnnouncementTable.FIELD_TITLE, AnnouncementTable.FIELD_CREATED_AT}, null, null, AnnouncementTable.FIELD_CREATED_AT);
         Binder.restoreCallingIdentity(identityToken);
 
         if (cursor != null && cursor.getCount() != 0) {

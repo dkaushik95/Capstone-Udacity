@@ -49,5 +49,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:9.0.0'
     compile 'com.google.android.gms:play-services:9.0.0'
     compile 'com.google.firebase:firebase-ads:9.0.0'
+    compile 'com.androidessence:recyclerviewcursoradapter:1.0.0'
     testCompile 'junit:junit:4.12'
 }

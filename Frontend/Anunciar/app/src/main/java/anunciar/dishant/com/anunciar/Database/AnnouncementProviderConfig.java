@@ -9,7 +9,7 @@ import ckm.simple.sql_provider.annotation.SimpleSQLConfig;
         name = "AnnouncementProvider",
         authority = "anunciar.dishant.com.anunciar.Database",
         database = "anuncement.db",
-        version = 1)
+        version = 2)
 public class AnnouncementProviderConfig implements ProviderConfig {
     @Override
     public UpgradeScript[] getUpdateScripts() {

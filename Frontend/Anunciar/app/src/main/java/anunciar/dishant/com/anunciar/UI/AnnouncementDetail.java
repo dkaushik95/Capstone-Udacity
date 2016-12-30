@@ -47,8 +47,8 @@ public class AnnouncementDetail extends AppCompatActivity {
         getWindow().setReturnTransition(returnTrans);
 
         Intent intent = getIntent();
-        int id = intent.getIntExtra(AnnouncementTable.FIELD_ID, 0);
-        cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI, null, AnnouncementTable.FIELD_ID + " = " + id, null, null);
+        int id = intent.getIntExtra(AnnouncementTable.FIELD__ID, 0);
+        cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI, null, AnnouncementTable.FIELD__ID + " = " + id, null, null);
         if (cursor == null) {
             Log.e("ERROR", "onCreate: No Content", null);
         } else {

@@ -1,10 +1,14 @@
 package anunciar.dishant.com.anunciar.UI;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +25,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidessence.recyclerviewcursoradapter.RecyclerViewCursorAdapter;
+import com.androidessence.recyclerviewcursoradapter.RecyclerViewCursorViewHolder;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Picasso;
@@ -33,14 +39,19 @@ import anunciar.dishant.com.anunciar.Database.AnnouncementTable;
 import anunciar.dishant.com.anunciar.R;
 import anunciar.dishant.com.anunciar.Service.AnunciarSyncAdapter;
 import anunciar.dishant.com.anunciar.Service.CircleTransform;
-import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
     SharedPreferences prefs = null;
     RecyclerView mRecyclerView;
     Cursor cursor;
     int localCount;
     private AdView mAdView;
+
+    private AnnouncementAdapter mAnnouncementAdapter;
+
+    private static final int ANNOUNCEMENT_LOADER = 0;
+
 
     @Override
     public void onBackPressed() {
@@ -92,26 +103,68 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Creating Announcements
-        mRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
-        mRecyclerView.setItemAnimator(new SlideInDownAnimator());
-        getData();
 
-        cursor = getContentResolver().query(AnnouncementTable.CONTENT_URI,
-                null,
-                null,
-                null,
-                AnnouncementTable.FIELD_CREATED_AT + " DESC");
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mRecyclerView.setAdapter(new AnnouncementAdapter(cursor));
+        RecyclerView mAnnouncementRecyclerView = (RecyclerView) findViewById(R.id.announcement_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mAnnouncementAdapter = new AnnouncementAdapter(this);
+        mAnnouncementRecyclerView.setLayoutManager(linearLayoutManager);
+        mAnnouncementRecyclerView.setAdapter(mAnnouncementAdapter);
         RelativeLayout emptyView = (RelativeLayout) findViewById(R.id.empty_view_main);
-        if (cursor.getCount() == 0) {
-            mRecyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        } else {
-            mRecyclerView.setVisibility(View.VISIBLE);
+        if (mAnnouncementRecyclerView.getAdapter().getItemCount() == 0) {
+            mAnnouncementRecyclerView.setVisibility(View.VISIBLE);
             emptyView.setVisibility(View.GONE);
+        } else {
+            mAnnouncementRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        getSupportLoaderManager().initLoader(ANNOUNCEMENT_LOADER, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case ANNOUNCEMENT_LOADER:
+                return new CursorLoader(
+                        this,
+                        AnnouncementTable.CONTENT_URI,
+                        null,
+                        null,
+                        null,
+                        AnnouncementTable.FIELD_CREATED_AT + " DESC"
+                );
+            default:
+                throw new UnsupportedOperationException("Unknown loader id: " + id);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        switch (loader.getId()) {
+            case ANNOUNCEMENT_LOADER:
+                mAnnouncementAdapter.swapCursor(data);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown loader id: " + loader.getId());
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        switch (loader.getId()) {
+            case ANNOUNCEMENT_LOADER:
+                mAnnouncementAdapter.swapCursor(null);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown loader id: " + loader.getId());
+        }
     }
 
     public void showAccount(View view) {
@@ -121,69 +174,145 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public class AnnouncementAdapter extends RecyclerViewCursorAdapter<AnnouncementAdapter.AnnouncementViewHolder> {
 
-    public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.MyViewHolder> {
-        Cursor mCursor;
 
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView title, createAt;
+        private static final int NAME_INDEX = 1;
 
-            MyViewHolder(View itemView) {
-                super(itemView);
-                title = (TextView) itemView.findViewById(R.id.card_title);
-                createAt = (TextView) itemView.findViewById(R.id.card_created);
-            }
+        public AnnouncementAdapter(Context context) {
+            super(context);
+
+            setupCursorAdapter(null, 0, R.layout.announcement_list_item, false);
         }
 
-        AnnouncementAdapter(Cursor aCursor) {
-            mCursor = aCursor;
-            mCursor.moveToFirst();
-        }
 
         @Override
-        public MyViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-            View mView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.announcement_list_item, null);
-            final MyViewHolder vh = new MyViewHolder(mView);
+        public AnnouncementViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View mView = mCursorAdapter.newView(mContext, mCursorAdapter.getCursor(), parent);
+            final AnnouncementViewHolder vh = new AnnouncementViewHolder(mView);
+
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                     Intent list_item = new Intent(MainActivity.this, AnnouncementDetail.class);
                     int itempos = vh.getLayoutPosition();
-                    mCursor.moveToPosition(itempos);
-                    list_item.putExtra(AnnouncementTable.FIELD_ID, mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)));
+                    mCursorAdapter.getCursor().moveToPosition(itempos);
+                    list_item.putExtra(AnnouncementTable.FIELD__ID, mCursorAdapter.getCursor().getInt(mCursorAdapter.getCursor().getColumnIndex(AnnouncementTable.FIELD__ID)));
                     startActivity(list_item, options.toBundle());
                 }
             });
+
             return vh;
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
-            mCursor.moveToPosition(position);
-            holder.title.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
-            holder.title.setContentDescription(holder.title.getText());
-            try {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
-                Date now = new Date();
-                String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
-                if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
-                    holder.createAt.setText(R.string.day_today);
+        public void onBindViewHolder(AnnouncementViewHolder holder, int position) {
+            mCursorAdapter.getCursor().moveToPosition(position);
 
-                } else {
-                    holder.createAt.setText(days);
+            setViewHolder(holder);
+
+            mCursorAdapter.bindView(null, mContext, mCursorAdapter.getCursor());
+
+        }
+
+        public class AnnouncementViewHolder extends RecyclerViewCursorViewHolder {
+            public final TextView mTitle;
+
+            public final TextView mCreated;
+
+            public AnnouncementViewHolder(View view) {
+                super(view);
+
+                mTitle = (TextView) view.findViewById(R.id.card_title);
+                mCreated = (TextView) view.findViewById(R.id.card_created);
+
+            }
+
+            @Override
+            public void bindCursor(Cursor cursor) {
+                mTitle.setText(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
+                try {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    Date past = format.parse(cursor.getString(cursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
+                    Date now = new Date();
+                    String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
+                    if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
+                        mCreated.setText(R.string.day_today);
+
+                    } else {
+                        mCreated.setText(days);
+                    }
+                } catch (Exception j) {
+                    j.printStackTrace();
                 }
-                holder.createAt.setContentDescription(holder.createAt.getText());
-                notifyItemInserted(position);
-            } catch (Exception j) {
-                j.printStackTrace();
             }
         }
-
-        @Override
-        public int getItemCount() {
-            return mCursor.getCount();
-        }
     }
+
+
+//    public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.MyViewHolder> {
+//        Cursor mCursor;
+//
+//        class MyViewHolder extends RecyclerView.ViewHolder {
+//            TextView title, createAt;
+//
+//            MyViewHolder(View itemView) {
+//                super(itemView);
+//                title = (TextView) itemView.findViewById(R.id.card_title);
+//                createAt = (TextView) itemView.findViewById(R.id.card_created);
+//            }
+//        }
+//
+//        AnnouncementAdapter(Cursor aCursor) {
+//            mCursor = aCursor;
+//            mCursor.moveToFirst();
+//        }
+//
+//        @Override
+//        public MyViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+//            View mView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.announcement_list_item, null);
+//            final MyViewHolder vh = new MyViewHolder(mView);
+//            mView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+//                    Intent list_item = new Intent(MainActivity.this, AnnouncementDetail.class);
+//                    int itempos = vh.getLayoutPosition();
+//                    mCursor.moveToPosition(itempos);
+//                    list_item.putExtra(AnnouncementTable.FIELD_ID, mCursor.getInt(mCursor.getColumnIndex(AnnouncementTable.FIELD_ID)));
+//                    startActivity(list_item, options.toBundle());
+//                }
+//            });
+//            return vh;
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(MyViewHolder holder, int position) {
+//            mCursor.moveToPosition(position);
+//            holder.title.setText(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_TITLE)));
+//            holder.title.setContentDescription(holder.title.getText());
+//            try {
+//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//                Date past = format.parse(mCursor.getString(mCursor.getColumnIndex(AnnouncementTable.FIELD_CREATED_AT)).substring(0, 10));
+//                Date now = new Date();
+//                String days = TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + " days ago";
+//                if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) == 0) {
+//                    holder.createAt.setText(R.string.day_today);
+//
+//                } else {
+//                    holder.createAt.setText(days);
+//                }
+//                holder.createAt.setContentDescription(holder.createAt.getText());
+//                notifyItemInserted(position);
+//            } catch (Exception j) {
+//                j.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return mCursor.getCount();
+//        }
+//    }
 }

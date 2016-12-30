@@ -99,7 +99,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                         try {
                             JSONObject mJsonObject = response.getJSONObject(i);
                             ContentValues announcement = new ContentValues();
-                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getString("id"));
+                            announcement.put(AnnouncementTable.FIELD__ID, mJsonObject.getString("id"));
                             announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getString("title"));
                             announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getString("description"));
                             announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getString("deadline"));
@@ -148,7 +148,7 @@ public class AnunciarSyncAdapter extends AbstractThreadedSyncAdapter {
                                         try {
                                             JSONObject mJsonObject = response.getJSONObject(i);
                                             ContentValues announcement = new ContentValues();
-                                            announcement.put(AnnouncementTable.FIELD_ID, mJsonObject.getString("id"));
+                                            announcement.put(AnnouncementTable.FIELD__ID, mJsonObject.getString("id"));
                                             announcement.put(AnnouncementTable.FIELD_TITLE, mJsonObject.getString("title"));
                                             announcement.put(AnnouncementTable.FIELD_DESCRIPTION, mJsonObject.getString("description"));
                                             announcement.put(AnnouncementTable.FIELD_DEADLINE, mJsonObject.getString("deadline"));

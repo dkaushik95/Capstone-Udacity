@@ -10,8 +10,8 @@ import ckm.simple.sql_provider.annotation.SimpleSQLTable;
 @SimpleSQLTable(table = "announcement", provider = "AnnouncementProvider")
 public class AnnouncementTableDefinition {
 
-    @SimpleSQLColumn(value = "id", primary = true)
-    public static String _ID;
+    @SimpleSQLColumn(value = "_id", primary = true)
+    public static int _ID;
 
     @SimpleSQLColumn(value = "title")
     public static String TITLE;
